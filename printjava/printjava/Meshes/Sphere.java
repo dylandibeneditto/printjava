@@ -7,7 +7,7 @@ import printjava.Triangle;
 import printjava.Point;
 
 public class Sphere extends Mesh {
-    public int radius;
+    public double radius;
     
     final int latitude = 30;
     final int longitude = 30;
@@ -19,7 +19,7 @@ public class Sphere extends Mesh {
         this.generate();
     }
 
-    public Sphere(int radius) {
+    public Sphere(double radius) {
         super();
         this.radius = radius;
         this.anchor.y = -radius;
