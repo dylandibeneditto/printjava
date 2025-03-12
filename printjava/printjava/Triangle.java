@@ -11,13 +11,13 @@ public class Triangle {
     }
 
     private Point calculateNormal() {
-        double ux = p2.x - p1.x;
-        double uy = p2.y - p1.y;
-        double uz = p2.z - p1.z;
+        double ux = p1.x - p3.x;
+        double uy = p1.y - p3.y;
+        double uz = p1.z - p3.z;
 
-        double vx = p3.x - p1.x;
-        double vy = p3.y - p1.y;
-        double vz = p3.z - p1.z;
+        double vx = p2.x - p3.x;
+        double vy = p2.y - p3.y;
+        double vz = p2.z - p3.z;
 
         double nx = uy * vz - uz * vy;
         double ny = uz * vx - ux * vz;

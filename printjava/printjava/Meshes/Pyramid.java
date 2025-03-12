@@ -81,15 +81,15 @@ public class Pyramid extends Mesh {
         ));
 
         add(new Triangle(
-            new Point(-halfBx, -halfHeight, -halfBy),
+            new Point(halfBx, -halfHeight, halfBy),
             new Point(halfBx, -halfHeight, -halfBy),
-            new Point(halfBx, -halfHeight, halfBy)
+            new Point(-halfBx, -halfHeight, -halfBy)
         ));
 
         add(new Triangle(
-            new Point(halfBx, -halfHeight, halfBy),
+            new Point(-halfBx, -halfHeight, -halfBy),
             new Point(-halfBx, -halfHeight, halfBy),
-            new Point(-halfBx, -halfHeight, -halfBy)
+            new Point(halfBx, -halfHeight, halfBy)
         ));
     }
 }

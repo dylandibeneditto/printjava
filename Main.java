@@ -18,10 +18,11 @@ class Main {
         // create and add a cube
         Rect cube = new Rect(1);
         // set the position in space to a new point in space
-        cube.position = new Point(1.2, 0, 1.2);
+        cube.position = new Point(1.2, 1, 1.2);
 		f.add(cube);
 
         Sphere sphere = new Sphere(0.5);
+        sphere.scale = new Point(3,1,1);
         sphere.position = new Point(-1.2, 0, -1.2);
         f.add(sphere);
 

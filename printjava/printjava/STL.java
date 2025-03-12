@@ -33,11 +33,28 @@ public class STL {
 				double my = m.position.y - m.anchor.y;
 				double mz = m.position.z - m.anchor.z;
 
+				double rx = m.rotation.x;
+				double ry = m.rotation.y;
+				double rz = m.rotation.z;
+
+				double sx = m.scale.x;
+				double sy = m.scale.y;
+				double sz = m.scale.z;
+
 				for (Triangle t : this.meshes.get(i).triangles) {
-					writer.write(String.format("  facet normal %f %f %f\n", t.normal.x + mx, t.normal.z + mz, t.normal.y + my));
+					double tx = t.normal.x + mx;
+					double ty = t.normal.y + my;
+					double tz = t.normal.z + mz;
+					writer.write(String.format("  facet normal %f %f %f\n", tx, ty, tz));
 					writer.write("    outer loop\n");
 					for (Point v : List.of(t.p1, t.p2, t.p3)) {
-						writer.write(String.format("      vertex %f %f %f\n", v.x + mx, v.z + mz, v.y + my));
+						double x = v.x * sx;
+						double y = v.y * sy;
+						double z = v.z * sz;
+						x += mx;
+						y += my;
+						z += mz;
+						writer.write(String.format("      vertex %f %f %f\n", x, y, z));
 					}
 					writer.write("    endloop\n  endfacet\n");
 				}

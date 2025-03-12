@@ -65,7 +65,7 @@ public class Rect extends Mesh {
         add(new Triangle(v4, v3, v7));
         add(new Triangle(v3, v2, v6));
         add(new Triangle(v3, v6, v7));
-        add(new Triangle(v0, v1, v5));
-        add(new Triangle(v0, v5, v4));        
+        add(new Triangle(v5, v1, v0));
+        add(new Triangle(v4, v5, v0));        
     }
 }
