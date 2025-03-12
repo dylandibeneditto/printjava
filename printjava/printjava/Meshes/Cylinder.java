@@ -22,11 +22,20 @@ public class Cylinder extends Mesh {
         super();
         this.radius = radius;
         this.height = height;
-        this.anchor.y = -height / 2;
         this.generate();
     }
 
+    public void snapToGround() {
+        this.anchor.y = -this.height / 2;
+    }
+
+    public void snapToCenter() {
+        this.anchor.y = 0;
+    }
+
     private void generate() {
+        this.snapToGround();
+
         ArrayList<Point> topPoints = new ArrayList<Point>();
         ArrayList<Point> bottomPoints = new ArrayList<Point>();
 

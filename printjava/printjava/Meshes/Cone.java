@@ -23,7 +23,17 @@ public class Cone extends Mesh {
         this.generate();
     }
 
+    public void snapToGround() {
+        this.anchor.y = 0;
+    }
+
+    public void snapToCenter() {
+        this.anchor.y = this.height / 2;
+    }
+
     private void generate() {
+        this.snapToGround();
+
         Point topCenter = new Point(0, this.height, 0);
         Point bottomCenter = new Point(0, 0, 0);
 

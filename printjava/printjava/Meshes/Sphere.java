@@ -26,7 +26,17 @@ public class Sphere extends Mesh {
         this.generate();
     }
 
+    public void snapToGround() {
+        this.anchor.y = -this.radius / 2;
+    }
+
+    public void snapToCenter() {
+        this.anchor.y = 0;
+    }
+
     private void generate() {
+        this.snapToGround();
+
         ArrayList<Point> points = new ArrayList<Point>();
         for (int i = 0; i <= this.latitude; i++) {
             double theta = i * Math.PI / this.latitude;

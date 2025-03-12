@@ -14,7 +14,6 @@ public class Pyramid extends Mesh {
         this.bx = 1;
         this.by = 1;
         this.height = 1;
-        this.anchor.y = -1 / 2;
         this.generate();
     }
 
@@ -23,7 +22,6 @@ public class Pyramid extends Mesh {
         this.bx = size;
         this.by = size;
         this.height = size;
-        this.anchor.y = -size / 2;
         this.generate();
     }
 
@@ -32,7 +30,6 @@ public class Pyramid extends Mesh {
         this.bx = b;
         this.by = b;
         this.height = h;
-        this.anchor.y = -h / 2;
         this.generate();
     }
 
@@ -41,11 +38,20 @@ public class Pyramid extends Mesh {
         this.bx = bx;
         this.by = by;
         this.height = h;
-        this.anchor.y = -h / 2;
         this.generate();
     }
 
+    public void snapToGround() {
+        this.anchor.y = -this.height / 2;
+    }
+
+    public void snapToCenter() {
+        this.anchor.y = 0;
+    }
+
     private void generate() {
+        this.snapToGround();
+
         double halfBx = this.bx / 2.0;
         double halfBy = this.by / 2.0;
         double halfHeight = this.height / 2.0;

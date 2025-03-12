@@ -12,7 +12,6 @@ public class Rect extends Mesh {
         this.width = 1;
         this.height = 1;
         this.depth = 1;
-        this.anchor.y = -1 / 2;
         this.generate();
     }
 
@@ -21,7 +20,6 @@ public class Rect extends Mesh {
         this.width = size;
         this.height = size;
         this.depth = size;
-        this.anchor.y = -size / 2;
         this.generate();
     }
 
@@ -30,11 +28,20 @@ public class Rect extends Mesh {
         this.width = width;
         this.height = height;
         this.depth = depth;
-        this.anchor.y = -height / 2;
         generate();
     }
 
+    public void snapToGround() {
+        this.anchor.y = -this.height / 2;
+    }
+
+    public void snapToCenter() {
+        this.anchor.y = 0;
+    }
+
     public void generate() {
+        this.snapToGround();
+
         double halfWidth = this.width / 2.0;
         double halfHeight = this.height / 2.0;
         double halfDepth = this.depth / 2.0;

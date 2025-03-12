@@ -9,7 +9,6 @@ class Main {
 
         // EXAMPLE CODE FOR PRINTJAVA
         // TODO: Implement Meshes to have rotation and scaling vectors
-        // TODO: Implement Snapping to ground to be initially off for shapes that need it
         // TODO: Possible future geometry: torus, lathe (line revolved around axis), text
 
 		// create the stl file
