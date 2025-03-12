@@ -27,11 +27,17 @@ public class STL {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.name + ".stl"))) {
 			for(int i = 0; i < this.meshes.size(); i++) {
 				writer.write(String.format("solid %s\n", i));
+				Mesh m = this.meshes.get(i);
+
+				double mx = m.position.x - m.anchor.x;
+				double my = m.position.y - m.anchor.y;
+				double mz = m.position.z - m.anchor.z;
+
 				for (Triangle t : this.meshes.get(i).triangles) {
-					writer.write(String.format("  facet normal %f %f %f\n", t.normal.x, t.normal.y, t.normal.z));
+					writer.write(String.format("  facet normal %f %f %f\n", t.normal.x + mx, t.normal.z + mz, t.normal.y + my));
 					writer.write("    outer loop\n");
 					for (Point v : List.of(t.p1, t.p2, t.p3)) {
-						writer.write(String.format("      vertex %f %f %f\n", v.x, v.y, v.z));
+						writer.write(String.format("      vertex %f %f %f\n", v.x + mx, v.z + mz, v.y + my));
 					}
 					writer.write("    endloop\n  endfacet\n");
 				}
