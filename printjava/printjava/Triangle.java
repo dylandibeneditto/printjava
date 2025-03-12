@@ -1,0 +1,33 @@
+package printjava;
+
+public class Triangle {
+    public Point p1, p2, p3, normal;
+
+    public Triangle(Point p1, Point p2, Point p3) {
+        this.p1 = p1;
+        this.p2 = p2;
+        this.p3 = p3;
+        this.normal = this.calculateNormal();
+    }
+
+    private Point calculateNormal() {
+        double ux = p2.x - p1.x;
+        double uy = p2.y - p1.y;
+        double uz = p2.z - p1.z;
+
+        double vx = p3.x - p1.x;
+        double vy = p3.y - p1.y;
+        double vz = p3.z - p1.z;
+
+        double nx = uy * vz - uz * vy;
+        double ny = uz * vx - ux * vz;
+        double nz = ux * vy - uy * vx;
+
+        double length = Math.sqrt(nx * nx + ny * ny + nz * nz);
+        if(length == 0){
+            return new Point(0,0,0);
+        }
+        return new Point(nx / length, ny / length, nz / length);
+    }
+
+}
