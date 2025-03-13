@@ -1,4 +1,5 @@
 import java.io.*;
+
 // used to import lower level classes (STL, Mesh, Triangle, Points)
 import printjava.*;
 // used to import higher level meshes (Rect, Sphere, Pyramid, etc)
@@ -12,13 +13,16 @@ class Main {
         // TODO: Possible future geometry: torus, lathe (line revolved around axis), text, 3d graph
 
 		STL f = new STL("test");
-
-        Graph g = new Graph();
+        Graph g = new Graph(Main::surfaceFunction);
 		f.add(g);
 
 		f.write();
 
 		// display the file in a window (soon?)
 		//f.show();
+    }
+
+    private static double surfaceFunction(double x, double y) {
+        return x*x*x + y*y*y;
     }
 }
