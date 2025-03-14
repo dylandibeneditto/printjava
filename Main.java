@@ -23,6 +23,6 @@ class Main {
     }
 
     private static double surfaceFunction(double x, double y) {
-        return x*x*x + y*y*y;
+        return x*x + y*y;
     }
 }

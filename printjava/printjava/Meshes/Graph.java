@@ -6,9 +6,12 @@ import printjava.Point;
 import java.util.function.BiFunction;
 
 public class Graph extends Mesh {
-    public double startX, startY, endX, endY;
-    public double width, height, depth;
-    public int xDivisions, yDivisions;
+    private double startX, startY, endX, endY;
+    private double width, height, depth;
+    private int xDivisions, yDivisions;
+
+    private boolean base = true;
+    private double baseHeight = 0.1;
 
     public Graph(BiFunction<Double, Double, Double> f) {
         super();
@@ -16,8 +19,8 @@ public class Graph extends Mesh {
         this.startY = -10;
         this.endX = 10;
         this.endY = 10;
-        this.width = 1;
-        this.height = 1;
+        this.width = 2;
+        this.height = 2;
         this.depth = 1;
         this.xDivisions = 100;
         this.yDivisions = 100;
@@ -92,35 +95,47 @@ public class Graph extends Mesh {
         }
     
         double range = top - bottom;
-        if (range == 0) range = 1; // Prevent division by zero
+        if (range == 0) range = 1;
     
-        // Generate mesh
         for (int i = 0; i < this.xDivisions; i++) {
             double x0 = -this.width / 2 + i * rdx;
-            double x1 = -this.width / 2 + (i + 1) * rdx; // Fix here
-    
+            double x1 = -this.width / 2 + (i + 1) * rdx;
+        
             for (int j = 0; j < this.yDivisions; j++) {
                 double y0 = -this.height / 2 + j * rdy;
-                double y1 = -this.height / 2 + (j + 1) * rdy; // Fix here
-    
-                double h00 = ((points[i][j] - bottom) / range) * this.depth;
-                double h10 = ((points[i + 1][j] - bottom) / range) * this.depth;
-                double h11 = ((points[i + 1][j + 1] - bottom) / range) * this.depth;
-                double h01 = ((points[i][j + 1] - bottom) / range) * this.depth;
-    
-                // Ensure depth is applied correctly
-                add(new Triangle(
-                    new Point(x0, h00, y0), // y0 should be the position, hXX should be depth
-                    new Point(x1, h10, y0),
-                    new Point(x1, h11, y1)
-                ));
-    
-                add(new Triangle(
-                    new Point(x0, h00, y0),
-                    new Point(x1, h11, y1),
-                    new Point(x0, h01, y1)
-                ));
+                double y1 = -this.height / 2 + (j + 1) * rdy;
+        
+                double h00 = this.baseHeight + ((points[i][j] - bottom) / range) * (this.depth - this.baseHeight);
+                double h10 = this.baseHeight + ((points[i + 1][j] - bottom) / range) * (this.depth - this.baseHeight);
+                double h11 = this.baseHeight + ((points[i + 1][j + 1] - bottom) / range) * (this.depth - this.baseHeight);
+                double h01 = this.baseHeight + ((points[i][j + 1] - bottom) / range) * (this.depth - this.baseHeight);
+        
+                if (this.base && (i == 0 || i == this.xDivisions - 1 || j == 0 || j == this.yDivisions - 1)) {
+                    if (i == 0) {
+                        add(new Triangle(new Point(x0, 0, y1), new Point(x0, 0, y0), new Point(x0, h00, y0)));
+                        add(new Triangle(new Point(x0, h01, y1), new Point(x0, 0, y1), new Point(x0, h00, y0)));
+                    }
+                    if (i == this.xDivisions - 1) {
+                        add(new Triangle(new Point(x1, 0, y1), new Point(x1, h11, y1), new Point(x1, h10, y0)));
+                        add(new Triangle(new Point(x1, 0, y0), new Point(x1, 0, y1), new Point(x1, h10, y0)));
+                    }
+                    if (j == 0) {
+                        add(new Triangle(new Point(x1, 0, y0), new Point(x1, h10, y0), new Point(x0, h00, y0)));
+                        add(new Triangle(new Point(x0, 0, y0), new Point(x1, 0, y0), new Point(x0, h00, y0)));
+                    }
+                    if (j == this.yDivisions - 1) {
+                        add(new Triangle(new Point(x1, h11, y1), new Point(x1, 0, y1), new Point(x0, 0, y1)));
+                        add(new Triangle(new Point(x0, h01, y1), new Point(x1, h11, y1), new Point(x0, 0, y1)));
+                    }
+                }
+        
+                // Add surface triangles
+                add(new Triangle(new Point(x0, h00, y0), new Point(x1, h10, y0), new Point(x1, h11, y1)));
+                add(new Triangle(new Point(x0, h00, y0), new Point(x1, h11, y1), new Point(x0, h01, y1)));
             }
         }
+
+        add(new Triangle(new Point(this.width / 2, 0, this.height / 2), new Point(this.width / 2, 0, -this.height / 2), new Point(-this.width / 2, 0, -this.height / 2)));
+        add(new Triangle(new Point(-this.width / 2, 0, this.height / 2), new Point(this.width / 2, 0, this.height / 2), new Point(-this.width / 2, 0, -this.height / 2)));
     }
 }
