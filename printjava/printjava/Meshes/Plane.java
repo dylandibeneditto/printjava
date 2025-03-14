@@ -5,7 +5,7 @@ import printjava.Point;
 import printjava.Triangle;
 
 public class Plane extends Mesh {
-    public double width, height;
+    private double width, height;
 
     public Plane() {
         super();

@@ -5,7 +5,7 @@ import printjava.Triangle;
 import printjava.Point;
 
 public class Cone extends Mesh {
-    public double radius, height;
+    private double radius, height;
 
     final int resolution = 50;
 

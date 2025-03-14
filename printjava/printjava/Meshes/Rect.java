@@ -5,7 +5,7 @@ import printjava.Point;
 import printjava.Triangle;
 
 public class Rect extends Mesh {
-    public double width, height, depth;
+    private double width, height, depth;
 
     public Rect() {
         super();

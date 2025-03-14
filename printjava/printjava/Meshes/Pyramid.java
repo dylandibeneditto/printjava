@@ -5,9 +5,9 @@ import printjava.Triangle;
 import printjava.Point;
 
 public class Pyramid extends Mesh {
-    public double bx;
-    public double by;
-    public double height;
+    private double bx;
+    private double by;
+    private double height;
 
     public Pyramid() {
         super();

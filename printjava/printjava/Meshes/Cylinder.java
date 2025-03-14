@@ -6,8 +6,8 @@ import printjava.Triangle;
 import printjava.Point;
 
 public class Cylinder extends Mesh {
-    public double radius;
-    public double height;
+    private double radius;
+    private double height;
     final int resolution = 30;
 
     public Cylinder() {
