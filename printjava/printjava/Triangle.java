@@ -1,7 +1,7 @@
 package printjava;
 
 public class Triangle {
-    private Point p1, p2, p3, normal;
+    public Point p1, p2, p3, normal;
 
     public Triangle(Point p1, Point p2, Point p3) {
         this.p1 = p1;
