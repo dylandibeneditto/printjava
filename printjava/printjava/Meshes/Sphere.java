@@ -9,20 +9,26 @@ import printjava.Point;
 public class Sphere extends Mesh {
     private double radius;
     
-    final int latitude = 30;
-    final int longitude = 30;
+    private int latitude = 30;
+    private int longitude = 30;
 
     public Sphere() {
         super();
         this.radius = 1;
-        this.anchor.y = -1;
         this.generate();
     }
 
     public Sphere(double radius) {
         super();
         this.radius = radius;
-        this.anchor.y = -radius;
+        this.generate();
+    }
+
+    public Sphere(double radius, int latitude, int longitude) {
+        super();
+        this.radius = radius;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.generate();
     }
 

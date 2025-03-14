@@ -7,7 +7,7 @@ import printjava.Point;
 public class Cone extends Mesh {
     private double radius, height;
 
-    final int resolution = 50;
+    private int resolution = 50;
 
     public Cone() {
         super();
@@ -20,6 +20,14 @@ public class Cone extends Mesh {
         super();
         this.radius = radius;
         this.height = height;
+        this.generate();
+    }
+
+    public Cone(double radius, double height, int resolution) {
+        super();
+        this.radius = radius;
+        this.height = height;
+        this.resolution = resolution;
         this.generate();
     }
 

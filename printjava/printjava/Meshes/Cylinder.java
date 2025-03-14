@@ -8,13 +8,12 @@ import printjava.Point;
 public class Cylinder extends Mesh {
     private double radius;
     private double height;
-    final int resolution = 30;
+    private int resolution = 30;
 
     public Cylinder() {
         super();
         this.radius = 1;
         this.height = 1;
-        this.anchor.y = -1 / 2;
         this.generate();
     }
 
@@ -22,6 +21,14 @@ public class Cylinder extends Mesh {
         super();
         this.radius = radius;
         this.height = height;
+        this.generate();
+    }
+
+    public Cylinder(double radius, double height, int resolution) {
+        super();
+        this.radius = radius;
+        this.height = height;
+        this.resolution = resolution;
         this.generate();
     }
 
