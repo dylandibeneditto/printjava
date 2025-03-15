@@ -13,16 +13,12 @@ class Main {
         // TODO: Possible future geometry: torus, lathe (line revolved around axis), text, 3d graph
 
 		STL f = new STL("test");
-        Graph g = new Graph(Main::surfaceFunction);
+        Rect g = new Rect(1);
 		f.add(g);
 
 		f.write();
 
 		// display the file in a window (soon?)
 		//f.show();
-    }
-
-    private static double surfaceFunction(double x, double y) {
-        return x*x + y*y;
     }
 }
