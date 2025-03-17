@@ -8,8 +8,10 @@ import printjava.Point;
 public class Cylinder extends Mesh {
     private double radius;
     private double height;
+    // number of subdivisions of the cylinder
     private int resolution = 30;
 
+    // new Cylinder();
     public Cylinder() {
         super();
         this.radius = 1;
@@ -17,6 +19,7 @@ public class Cylinder extends Mesh {
         this.generate();
     }
 
+    // new Cylinder(1, 1);
     public Cylinder(double radius, double height) {
         super();
         this.radius = radius;
@@ -24,6 +27,7 @@ public class Cylinder extends Mesh {
         this.generate();
     }
 
+    // new Cylinder(1, 1, 30);
     public Cylinder(double radius, double height, int resolution) {
         super();
         this.radius = radius;
@@ -40,6 +44,9 @@ public class Cylinder extends Mesh {
         this.anchor.y = 0;
     }
 
+    /**
+     * generates all the triangles that make up a cylinder
+     */
     private void generate() {
         this.snapToGround();
 

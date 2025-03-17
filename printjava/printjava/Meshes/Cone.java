@@ -7,8 +7,10 @@ import printjava.Point;
 public class Cone extends Mesh {
     private double radius, height;
 
-    private int resolution = 50;
+    // number of subdivisions of the cone
+    private int resolution = 30;
 
+    // new Cone();
     public Cone() {
         super();
         this.radius = 1;
@@ -16,6 +18,7 @@ public class Cone extends Mesh {
         this.generate();
     }
 
+    // new Cone(1, 1);
     public Cone(double radius, double height) {
         super();
         this.radius = radius;
@@ -23,6 +26,7 @@ public class Cone extends Mesh {
         this.generate();
     }
 
+    /// new Cone(1, 1, 30);
     public Cone(double radius, double height, int resolution) {
         super();
         this.radius = radius;
@@ -39,6 +43,9 @@ public class Cone extends Mesh {
         this.anchor.y = this.height / 2;
     }
 
+    /**
+     * generates all the triangles that make up a cone
+     */
     private void generate() {
         this.snapToGround();
 

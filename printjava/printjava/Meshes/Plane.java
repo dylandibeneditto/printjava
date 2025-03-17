@@ -7,6 +7,7 @@ import printjava.Triangle;
 public class Plane extends Mesh {
     private double width, height;
 
+    // new Plane();
     public Plane() {
         super();
         this.width = 1;
@@ -14,6 +15,7 @@ public class Plane extends Mesh {
         this.generate();
     }
 
+    // new Plane(1);
     public Plane(double size) {
         super();
         this.width = size;
@@ -21,6 +23,7 @@ public class Plane extends Mesh {
         this.generate();
     }
 
+    // new Plane(1, 1);
     public Plane(double width, double height) {
         super();
         this.width = width;
@@ -28,6 +31,9 @@ public class Plane extends Mesh {
         generate();
     }
 
+    /**
+     * generates both triangles needed to make a one sided plane
+     */
     private void generate() {
         double halfWidth = this.width / 2;
         double halfHeight = this.height / 2;

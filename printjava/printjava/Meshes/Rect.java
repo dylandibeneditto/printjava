@@ -7,6 +7,7 @@ import printjava.Triangle;
 public class Rect extends Mesh {
     private double width, height, depth;
 
+    // new Rect();
     public Rect() {
         super();
         this.width = 1;
@@ -15,6 +16,7 @@ public class Rect extends Mesh {
         this.generate();
     }
 
+    // new Rect(1);
     public Rect(double size) {
         super();
         this.width = size;
@@ -23,6 +25,7 @@ public class Rect extends Mesh {
         this.generate();
     }
 
+    // new Rect(1, 1, 1);
     public Rect(double width, double height, double depth) {
         super();
         this.width = width;
@@ -39,6 +42,9 @@ public class Rect extends Mesh {
         this.anchor.y = 0;
     }
 
+    /**
+     * generates all the triangles that make up a rectangular prism
+     */
     public void generate() {
         this.snapToGround();
 
