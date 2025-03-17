@@ -1,4 +1,4 @@
-import java.io.*;
+import java.io.IOException;
 
 // used to import lower level classes (STL, Mesh, Triangle, Points)
 import printjava.*;
@@ -7,18 +7,14 @@ import printjava.Meshes.*;
 
 class Main {
     public static void main(String[] args) throws IOException {
-
         // EXAMPLE CODE FOR PRINTJAVA
-        // TODO: Implement Meshes to have rotation and scaling vectors
-        // TODO: Possible future geometry: torus, lathe (line revolved around axis), text, 3d graph
-
 		STL f = new STL("test");
-        Rect g = new Rect(1);
+        Graph g = new Graph(Main::f, -100, -100, 100, 100, 5, 5, 5);
 		f.add(g);
-
 		f.write();
+    }
 
-		// display the file in a window (soon?)
-		//f.show();
+    private static double f(double x, double y) {
+        return x*x + y*y;
     }
 }
