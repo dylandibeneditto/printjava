@@ -18,4 +18,7 @@ This library allows for communication with 3d print files and java. Meshes are c
 Now this library will be accessable throughout all of JGrasp through the use of the `import` keyword.
 
 you can manually compile this library, just run the following code:
-```javac ./printjava/printjava/*.java ./printjava/printjava/Meshes/*.java; jar cvf printjava-1.0.jar -C printjava .```
+
+```bash
+javac ./printjava/printjava/*.java ./printjava/printjava/Meshes/*.java; jar cvf printjava-1.0.jar -C printjava .
+```
