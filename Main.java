@@ -7,10 +7,11 @@ import printjava.Meshes.*;
 
 class Main {
     public static void main(String[] args) throws IOException {
-        // EXAMPLE CODE FOR PRINTJAVA
 		STL f = new STL("test");
-        Graph g = new Graph(Main::f, -100, -100, 100, 100, 5, 5, 5);
-		f.add(g);
+        Rect r = new Rect(1);
+        r.position.x = 2;
+		f.add(r);
+        System.out.println("\n" + f + "\n");
 		f.write();
     }
 
