@@ -7,7 +7,7 @@ public class STL {
     private ArrayList<Mesh> meshes;
     private boolean verbose = true;
     private boolean metric = true;
-    private double w = 26.5; // Always stores the correct unit (cm or in)
+    private double w = 26.5;
     private double h = 26.5;
 
     public STL() {
@@ -84,73 +84,85 @@ public class STL {
         return new Point(newX, newY, newZ);
     }
 
-    public void write() throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.name + ".stl"))) {
-            int boundErrors = 0;
-            if (this.verbose)
-                System.out.println("Beginning write to '" + this.name + ".stl'");
-
-            for (int i = 0; i < this.meshes.size(); i++) {
-                writer.write(String.format("solid %s\n", i));
-                Mesh m = this.meshes.get(i);
-
-                double mx = m.position.x - m.anchor.x;
-                double my = m.position.y - m.anchor.y;
-                double mz = m.position.z - m.anchor.z;
-
-                double rx = m.rotation.x;
-                double ry = m.rotation.y;
-                double rz = m.rotation.z;
-                double rotationAngle = Math.sqrt(rx * rx + ry * ry + rz * rz);
-
-                if (rotationAngle != 0) {
-                    rx /= rotationAngle;
-                    ry /= rotationAngle;
-                    rz /= rotationAngle;
-                }
-
-                double sx = m.scale.x;
-                double sy = m.scale.y;
-                double sz = m.scale.z;
-
-                for (Triangle t : m.triangles) {
-                    Point rotatedNormal = (rotationAngle != 0) ? rotatePoint(t.normal, rx, ry, rz, rotationAngle) : t.normal;
-
-                    double tx = rotatedNormal.x + mx;
-                    double ty = rotatedNormal.y + my;
-                    double tz = rotatedNormal.z + mz;
-                    writer.write(String.format("  facet normal %f %f %f\n", tx, ty, tz));
-                    writer.write("    outer loop\n");
-
-                    for (Point v : List.of(t.p3, t.p2, t.p1)) {
-                        double x = v.x * sx;
-                        double y = v.y * sy;
-                        double z = v.z * sz;
-
-                        Point transformedVertex = (rotationAngle != 0) ? rotatePoint(new Point(x, y, z), rx, ry, rz, rotationAngle) : new Point(x, y, z);
-
-                        transformedVertex.x += mx;
-                        transformedVertex.y += my;
-                        transformedVertex.z += mz;
-
-                        if (transformedVertex.x > this.w / 2 || transformedVertex.x < -this.w / 2 || transformedVertex.y > this.h / 2 || transformedVertex.y < -this.h / 2) {
-                            boundErrors++;
-                        }
-
-                        writer.write(String.format("      vertex %f %f %f\n", transformedVertex.x, transformedVertex.y, transformedVertex.z));
-                    }
-
-                    writer.write("    endloop\n  endfacet\n");
-                }
-                writer.write(String.format("endsolid %s\n", i));
-            }
-            if (boundErrors > 0) {
-                System.out.println("WARNING: " + boundErrors + " vertices are outside the bounds of your printer.");
-            }
-            if (this.verbose)
-                System.out.println("File saved as '" + this.name + ".stl'");
-        }
-    }
+	public void write() {
+		String filePath = this.name + ".stl";
+	
+		File file = new File(filePath);
+		if (file.exists()) {
+			file.delete();
+		}
+	
+		int boundErrors = 0;
+		if (this.verbose)
+			System.out.println("Beginning write to '" + filePath + "'");
+	
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+			for (int i = 0; i < this.meshes.size(); i++) {
+				writer.write(String.format("solid %s\r\n", i)); // Windows line endings
+				Mesh m = this.meshes.get(i);
+	
+				double mx = m.position.x - m.anchor.x;
+				double my = m.position.y - m.anchor.y;
+				double mz = m.position.z - m.anchor.z;
+	
+				double rx = m.rotation.x;
+				double ry = m.rotation.y;
+				double rz = m.rotation.z;
+				double rotationAngle = Math.sqrt(rx * rx + ry * ry + rz * rz);
+	
+				if (rotationAngle != 0) {
+					rx /= rotationAngle;
+					ry /= rotationAngle;
+					rz /= rotationAngle;
+				}
+	
+				double sx = m.scale.x;
+				double sy = m.scale.y;
+				double sz = m.scale.z;
+	
+				for (Triangle t : m.triangles) {
+					Point rotatedNormal = (rotationAngle != 0) ? rotatePoint(t.normal, rx, ry, rz, rotationAngle) : t.normal;
+	
+					double tx = rotatedNormal.x + mx;
+					double ty = rotatedNormal.y + my;
+					double tz = rotatedNormal.z + mz;
+					writer.write(String.format("  facet normal %f %f %f\r\n", tx, ty, tz));
+					writer.write("    outer loop\r\n");
+	
+					for (Point v : List.of(t.p3, t.p2, t.p1)) {
+						double x = v.x * sx;
+						double y = v.y * sy;
+						double z = v.z * sz;
+	
+						Point transformedVertex = (rotationAngle != 0) ? rotatePoint(new Point(x, y, z), rx, ry, rz, rotationAngle) : new Point(x, y, z);
+	
+						transformedVertex.x += mx;
+						transformedVertex.y += my;
+						transformedVertex.z += mz;
+	
+						if (transformedVertex.x > this.w / 2 || transformedVertex.x < -this.w / 2 || transformedVertex.y > this.h / 2 || transformedVertex.y < -this.h / 2) {
+							boundErrors++;
+						}
+	
+						writer.write(String.format("      vertex %f %f %f\r\n", transformedVertex.x, transformedVertex.y, transformedVertex.z));
+					}
+	
+					writer.write("    endloop\r\n  endfacet\r\n");
+				}
+				writer.write(String.format("endsolid %s\r\n", i));
+			}
+	
+			if (boundErrors > 0) {
+				System.out.println("WARNING: " + boundErrors + " vertices are outside the bounds of your printer.");
+			}
+			if (this.verbose)
+				System.out.println("File saved as '" + filePath + "'");
+	
+		} catch (IOException e) {
+			System.err.println("Error writing STL file: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
 
     @Override
     public String toString() {
