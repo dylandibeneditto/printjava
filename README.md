@@ -7,7 +7,7 @@ This library allows for communication with 3d print files and java. Meshes are c
 
 1. install `printjava.jar`
 2. move the jar file to any directory
-3. copy the path to the jar file (`path\\to\\jar\\printjava.jar`)
+3. copy the path to the jar file (`path\to\jar\printjava.jar`)
 4. go to `Settings > PATH/CLASSPATH > Workspace`
 5. press the `CLASSPATHS` tab
 6. press `New`
@@ -16,3 +16,6 @@ This library allows for communication with 3d print files and java. Meshes are c
 9. restart your JGrasp
 
 Now this library will be accessable throughout all of JGrasp through the use of the `import` keyword.
+
+you can manually compile this library, just run the following code:
+```javac ./printjava/printjava/*.java ./printjava/printjava/Meshes/*.java; jar cvf printjava-1.0.jar -C printjava .```
