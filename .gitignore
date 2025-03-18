@@ -2,3 +2,5 @@
 Main.java
 Main.class
 test.stl
+printjava/printjava/*.class
+printjava/printjava/Meshes/*.class
