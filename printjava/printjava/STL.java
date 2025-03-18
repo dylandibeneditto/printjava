@@ -12,6 +12,8 @@ public class STL {
     public boolean verbose = true;
     // whether to use metric units, only accessable through getters and setters
     private boolean metric = true;
+    // whether to rotate meshes in radians
+    public boolean radians = true;
     // the width, height, and depth of the printer bed
     public double w = 26.5;
     public double h = 26.5;
@@ -69,10 +71,15 @@ public class STL {
     }
 
     /** 
-     * used for rotating points by a certain number of radians for each axis
+     * used for rotating points by a certain number of radians or degrees (based on status of this.radians) for each axis
      * @return the rotated point
      */
     private Point rotatePoint(Point p, double rx, double ry, double rz, double theta) {
+
+        if(!this.radians) { // convert if in degrees mode
+            theta = theta * Math.PI / 180;
+        }
+
         double cosTheta = Math.cos(theta);
         double sinTheta = Math.sin(theta);
 
