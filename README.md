@@ -1,7 +1,9 @@
 
 # PrintJava
 
-<img align="center" src="./.github/mandelbulb.png" alt="Mandelbulb created with PrintJava" width="400">
+<div align="center">
+  <img src="./.github/mandelbulb.png" alt="Mandelbulb created with PrintJava" width="400">
+</div>
 
 > The Mandelbulb Fractal created using PrintJava
 
