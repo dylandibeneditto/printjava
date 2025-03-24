@@ -1,0 +1,60 @@
+import java.io.IOException;
+// Point, Triangle, Mesh, STL
+import printjava.*;
+// Rect, Sphere, Graph, Field, etc.
+import printjava.Meshes.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        STL f = new STL("Field");
+
+        // WARNING: if you would like to use this code, make sure your machine can
+        // handle at least 8gb of RAM, also the output will be around 2.5gb on disk
+
+        // you can decrease the resolution by decreasing the last three parameters
+        // (xDivisions, yDivisions, zDivisions)
+        // first three parameters are width, height, and depth
+        Field field = new Field(Main::f, 2.5, 2.5, 2.5, 600, 600, 600);
+        f.add(field);
+
+        f.write();
+    }
+
+    /**
+     * all field functions must take in a point and return a double
+     * return 1.0 if the point is inside the field, and 0.0 if it is outside
+     * 
+     * (currently the return type is a double and not a boolean because that is what
+     * the underlying algorithm requires)
+     */
+    public static double f(Point p) {
+        double x = p.x;
+        double y = p.y;
+        double z = p.z;
+
+        double cx = x;
+        double cy = y;
+        double cz = z;
+
+        int iterations = 15;
+        double power = 8.0;
+        double bailout = 2.0;
+
+        for (int i = 0; i < iterations; i++) {
+            double r = Math.sqrt(x * x + y * y + z * z);
+            if (r > bailout) {
+                return 0.0;
+            }
+
+            double theta = Math.acos(z / r);
+            double phi = Math.atan2(y, x);
+            double rPower = Math.pow(r, power);
+
+            x = rPower * Math.sin(theta * power) * Math.cos(phi * power) + cx;
+            y = rPower * Math.sin(theta * power) * Math.sin(phi * power) + cy;
+            z = rPower * Math.cos(theta * power) + cz;
+        }
+
+        return 1.0;
+    }
+}
