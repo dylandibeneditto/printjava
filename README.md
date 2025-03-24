@@ -1,6 +1,9 @@
 
 # PrintJava
 
+![Render of a Mandelbulb using PrintJava](./.github/mandelbulb.png)
+> The Mandelbulb Fractal created using PrintJava
+
 This library allows for communication with 3d print files and java. Meshes are converted to `.stl` files, which can be provided for prints.
 
 ## JGrasp Setup
