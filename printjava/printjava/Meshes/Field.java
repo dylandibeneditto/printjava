@@ -114,6 +114,9 @@ public class Field extends Mesh {
                             add(new Triangle(p3, p2, p1));
                         }
                     }
+
+                    double progress = ((i * yDivisions * zDivisions) + (j * zDivisions) + k) / (double) ((xDivisions - 1) * (yDivisions - 1) * (zDivisions - 1));
+                    System.out.printf("\rRendering progress: %.2f%%", progress * 100);
                 }
             }
         }
