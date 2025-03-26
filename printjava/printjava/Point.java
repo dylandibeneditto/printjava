@@ -17,4 +17,14 @@ public class Point {
 		this.y = y;
 		this.z = z;
 	}
+
+	/**
+	 * returns the distance between this point and another point
+	 */
+	public double distance(Point p) {
+		double dx = x - p.x;
+		double dy = y - p.y;
+		double dz = z - p.z;
+		return Math.sqrt(dx * dx + dy * dy + dz * dz);
+	}
 }
