@@ -17,7 +17,7 @@ public class Pyramid extends Mesh {
         this.bx = 1;
         this.by = 1;
         this.height = 1;
-        this.generate();
+        
     }
 
     // new Pyramid(1);
@@ -26,7 +26,7 @@ public class Pyramid extends Mesh {
         this.bx = size;
         this.by = size;
         this.height = size;
-        this.generate();
+        
     }
 
     // new Pyramid(1, 1);
@@ -35,7 +35,7 @@ public class Pyramid extends Mesh {
         this.bx = b;
         this.by = b;
         this.height = h;
-        this.generate();
+        
     }
 
     // new Pyramid(1, 1, 1);
@@ -44,7 +44,6 @@ public class Pyramid extends Mesh {
         this.bx = bx;
         this.by = by;
         this.height = h;
-        this.generate();
     }
 
     public void snapToGround() {
@@ -58,9 +57,7 @@ public class Pyramid extends Mesh {
     /**
      * generates all the triangles that make up a pyramid
      */
-    private void generate() {
-        this.snapToGround();
-
+    public void generate() {
         double halfBx = this.bx / 2.0;
         double halfBy = this.by / 2.0;
         double halfHeight = this.height / 2.0;

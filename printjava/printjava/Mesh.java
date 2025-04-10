@@ -21,4 +21,14 @@ public class Mesh {
 	public void add(Triangle t) {
 		this.triangles.add(t);
 	}
+
+	/**
+	 * adds a quad to the mesh
+	 */
+	public void add(Quad q) {
+		Triangle[] qtriangles = q.toTriangle();
+		for (Triangle t : qtriangles) {
+			this.add(t);
+		}
+	}
 }

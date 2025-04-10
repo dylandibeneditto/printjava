@@ -13,7 +13,7 @@ public class Rect extends Mesh {
         this.width = 1;
         this.height = 1;
         this.depth = 1;
-        this.generate();
+        //
     }
 
     // new Rect(1);
@@ -22,7 +22,7 @@ public class Rect extends Mesh {
         this.width = size;
         this.height = size;
         this.depth = size;
-        this.generate();
+        
     }
 
     // new Rect(1, 1, 1);
@@ -31,7 +31,7 @@ public class Rect extends Mesh {
         this.width = width;
         this.height = height;
         this.depth = depth;
-        generate();
+        
     }
 
     public void snapToGround() {
@@ -46,7 +46,7 @@ public class Rect extends Mesh {
      * generates all the triangles that make up a rectangular prism
      */
     public void generate() {
-        this.snapToGround();
+        
 
         double halfWidth = this.width / 2.0;
         double halfHeight = this.height / 2.0;

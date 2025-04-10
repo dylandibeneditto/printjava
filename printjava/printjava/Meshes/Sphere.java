@@ -18,14 +18,14 @@ public class Sphere extends Mesh {
     public Sphere() {
         super();
         this.radius = 1;
-        this.generate();
+        
     }
 
     // new Sphere(1);
     public Sphere(double radius) {
         super();
         this.radius = radius;
-        this.generate();
+        
     }
 
     // new Sphere(1, 30, 30);
@@ -34,7 +34,7 @@ public class Sphere extends Mesh {
         this.radius = radius;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.generate();
+        
     }
 
     public void snapToGround() {
@@ -48,8 +48,8 @@ public class Sphere extends Mesh {
     /**
      * Generate all the triangles that make up the sphere
      */
-    private void generate() {
-        this.snapToGround();
+    public void generate() {
+        
 
         // generate the points of the sphere that intersect the latitude and longitude
         ArrayList<Point> points = new ArrayList<Point>();

@@ -12,7 +12,7 @@ public class Plane extends Mesh {
         super();
         this.width = 1;
         this.height = 1;
-        this.generate();
+        
     }
 
     // new Plane(1);
@@ -20,7 +20,7 @@ public class Plane extends Mesh {
         super();
         this.width = size;
         this.height = size;
-        this.generate();
+        
     }
 
     // new Plane(1, 1);
@@ -28,13 +28,13 @@ public class Plane extends Mesh {
         super();
         this.width = width;
         this.height = height;
-        generate();
+        
     }
 
     /**
      * generates both triangles needed to make a one sided plane
      */
-    private void generate() {
+    public void generate() {
         double halfWidth = this.width / 2;
         double halfHeight = this.height / 2;
 

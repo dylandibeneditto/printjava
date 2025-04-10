@@ -2,6 +2,7 @@ package printjava;
 
 import java.io.*;
 import java.util.*;
+import java.lang.reflect.Method;
 
 public class STL {
     // name of the file
@@ -115,8 +116,17 @@ public class STL {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (int i = 0; i < this.meshes.size(); i++) {
-                writer.write(String.format("solid %s\r\n", i));
                 Mesh m = this.meshes.get(i);
+
+                try {
+                    Method method = m.getClass().getMethod("generate");
+                    method.setAccessible(true);
+                    method.invoke(m);
+                } catch (NoSuchMethodException e) {
+                    //e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 double mx = m.position.x - m.anchor.x;
                 double my = m.position.y - m.anchor.y;

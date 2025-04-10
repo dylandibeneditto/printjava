@@ -15,7 +15,7 @@ public class Cone extends Mesh {
         super();
         this.radius = 1;
         this.height = 1;
-        this.generate();
+        
     }
 
     // new Cone(1, 1);
@@ -23,7 +23,7 @@ public class Cone extends Mesh {
         super();
         this.radius = radius;
         this.height = height;
-        this.generate();
+        
     }
 
     /// new Cone(1, 1, 30);
@@ -32,7 +32,7 @@ public class Cone extends Mesh {
         this.radius = radius;
         this.height = height;
         this.resolution = resolution;
-        this.generate();
+        
     }
 
     public void snapToGround() {
@@ -46,8 +46,8 @@ public class Cone extends Mesh {
     /**
      * generates all the triangles that make up a cone
      */
-    private void generate() {
-        this.snapToGround();
+    public void generate() {
+        
 
         Point topCenter = new Point(0, this.height, 0);
         Point bottomCenter = new Point(0, 0, 0);

@@ -16,7 +16,7 @@ public class Cylinder extends Mesh {
         super();
         this.radius = 1;
         this.height = 1;
-        this.generate();
+        
     }
 
     // new Cylinder(1, 1);
@@ -24,7 +24,7 @@ public class Cylinder extends Mesh {
         super();
         this.radius = radius;
         this.height = height;
-        this.generate();
+        
     }
 
     // new Cylinder(1, 1, 30);
@@ -33,7 +33,7 @@ public class Cylinder extends Mesh {
         this.radius = radius;
         this.height = height;
         this.resolution = resolution;
-        this.generate();
+        
     }
 
     public void snapToGround() {
@@ -47,8 +47,8 @@ public class Cylinder extends Mesh {
     /**
      * generates all the triangles that make up a cylinder
      */
-    private void generate() {
-        this.snapToGround();
+    public void generate() {
+        
 
         ArrayList<Point> topPoints = new ArrayList<Point>();
         ArrayList<Point> bottomPoints = new ArrayList<Point>();
