@@ -18,9 +18,6 @@ public class Point {
 		this.z = z;
 	}
 
-	/**
-	 * returns the distance between this point and another point
-	 */
 	public double distance(Point p) {
 		double dx = x - p.x;
 		double dy = y - p.y;
@@ -52,23 +49,35 @@ public class Point {
 		return new Point(this.x / factor, this.y / factor, this.z / factor);
 	}
 
+	/**
+	 * dot product of this point and another point
+	 */
 	public double dot(Point p) {
 		return this.x * p.x + this.y * p.y + this.z * p.z;
 	}
 
-	public Point cross(Point other) {
-		double cx = this.y * other.z - this.z * other.y;
-		double cy = this.z * other.x - this.x * other.z;
-		double cz = this.x * other.y - this.y * other.x;
+	/**
+	 * cross product of this point and another point
+	 */
+	public Point cross(Point p) {
+		double cx = this.y * p.z - this.z * p.y;
+		double cy = this.z * p.x - this.x * p.z;
+		double cz = this.x * p.y - this.y * p.x;
 		return new Point(cx, cy, cz);
 	}
 
+	/**
+	 * keeps the same direction from (0,0,0) but makes the distance 1
+	 */
 	public Point normalize() {
 		double mag = this.magnitude();
 		if (mag == 0) return new Point(0, 0, 0);
 		return new Point(this.x / mag, this.y / mag, this.z / mag);
 	}
 
+	/**
+	 * length of the vector from (0,0,0)
+	 */
 	public double magnitude() {
 		return Math.sqrt(x * x + y * y + z * z);
 	}
@@ -137,5 +146,14 @@ public class Point {
 				.rotateAroundX(anglesRadians.x, center)
 				.rotateAroundY(anglesRadians.y, center)
 				.rotateAroundZ(anglesRadians.z, center);
+	}
+
+	public boolean equals(Point p) {
+		return this.x == p.x && this.y == p.y && this.z == p.z;
+	}
+
+	@Override
+	public String toString() {
+		return "(" + this.x + ", " + this.y + ", " + this.z + ")";
 	}
 }

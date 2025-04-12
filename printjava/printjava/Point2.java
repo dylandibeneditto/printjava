@@ -50,6 +50,10 @@ public class Point2 {
         return this.x * p.y - this.y * p.x;
     }
 
+    /**
+     * rotates the point around a center by a given angle of radians
+	 * @returns the rotated point, DOESNT CHANGE THIS POINT
+     */
     public Point2 rotate(double angleRadians, Point2 center) {
         double translatedX = this.x - center.x;
         double translatedY = this.y - center.y;
