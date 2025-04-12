@@ -40,8 +40,16 @@ public class Point {
 		return new Point(this.x * p.x, this.y * p.y, this.z * p.z);
 	}
 
+	public Point multiply(double factor) {
+		return new Point(this.x * factor, this.y * factor, this.z * factor);
+	}
+
 	public Point divide(Point p) {
 		return new Point(this.x / p.x, this.y / p.y, this.z / p.z);
+	}
+
+	public Point divide(double factor) {
+		return new Point(this.x / factor, this.y / factor, this.z / factor);
 	}
 
 	public double dot(Point p) {
@@ -53,6 +61,16 @@ public class Point {
 		double cy = this.z * other.x - this.x * other.z;
 		double cz = this.x * other.y - this.y * other.x;
 		return new Point(cx, cy, cz);
+	}
+
+	public Point normalize() {
+		double mag = this.magnitude();
+		if (mag == 0) return new Point(0, 0, 0);
+		return new Point(this.x / mag, this.y / mag, this.z / mag);
+	}
+
+	public double magnitude() {
+		return Math.sqrt(x * x + y * y + z * z);
 	}
 
 	/**

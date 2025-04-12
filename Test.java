@@ -12,6 +12,7 @@ public class Test {
 
         for (int i = 0; i < meshes.size(); i++) {
             meshes.get(i).position.set((i%10)*3, 0, (i/10)*3);
+            meshes.get(i).rotation.set(1, 1, 0);
             stl.add(meshes.get(i));
         }
 

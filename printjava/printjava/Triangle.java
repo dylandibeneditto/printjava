@@ -14,27 +14,20 @@ public class Triangle {
     }
 
     /**
-     * Calculate the normal of the triangle
+     * calculate the normal of the triangle
      * @return the normal point
      */
     private Point calculateNormal() {
-        double ux = p2.x - p1.x;
-        double uy = p2.y - p1.y;
-        double uz = p2.z - p1.z;
-
-        double vx = p3.x - p1.x;
-        double vy = p3.y - p1.y;
-        double vz = p3.z - p1.z;
-
-        double nx = uy * vz - uz * vy;
-        double ny = uz * vx - ux * vz;
-        double nz = ux * vy - uy * vx;
-
-        double length = Math.sqrt(nx * nx + ny * ny + nz * nz);
-        if(length == 0){
-            return new Point(0,0,0);
+        Point u = p2.subtract(p1);
+        Point v = p3.subtract(p1);
+    
+        Point normal = u.cross(v).normalize();
+    
+        if (normal.magnitude() == 0) {
+            return new Point(0, 0, 0);
         }
-        return new Point(nx / length, ny / length, nz / length);
+    
+        return normal;
     }
 
 }

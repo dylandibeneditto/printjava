@@ -30,8 +30,16 @@ public class Point2 {
         return new Point2(this.x * p.x, this.y * p.y);
     }
 
+    public Point2 multiply(double factor) {
+        return new Point2(this.x * factor, this.y * factor);
+    }
+
     public Point2 divide(Point2 p) {
         return new Point2(this.x / p.x, this.y / p.y);
+    }
+
+    public Point2 divide(double factor) {
+        return new Point2(this.x / factor, this.y / factor);
     }
 
     public double dot(Point2 p) {

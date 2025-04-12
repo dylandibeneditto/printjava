@@ -71,34 +71,6 @@ public class STL {
         this.meshes.add(m);
     }
 
-    /** 
-     * used for rotating points by a certain number of radians or degrees (based on status of this.radians) for each axis
-     * @return the rotated point
-     */
-    private Point rotatePoint(Point p, double rx, double ry, double rz, double theta) {
-
-        if(!this.radians) { // convert if in degrees mode
-            theta = theta * Math.PI / 180;
-        }
-
-        double cosTheta = Math.cos(theta);
-        double sinTheta = Math.sin(theta);
-
-        // crossing the point with the rotation axis
-        double crossX = ry * p.z - rz * p.y;
-        double crossY = rz * p.x - rx * p.z;
-        double crossZ = rx * p.y - ry * p.x;
-
-        // finding the dot product
-        double dot = rx * p.x + ry * p.y + rz * p.z;
-
-        double newX = p.x * cosTheta + crossX * sinTheta + rx * dot * (1 - cosTheta);
-        double newY = p.y * cosTheta + crossY * sinTheta + ry * dot * (1 - cosTheta);
-        double newZ = p.z * cosTheta + crossZ * sinTheta + rz * dot * (1 - cosTheta);
-
-        return new Point(newX, newY, newZ);
-    }
-
     /**
      * writes to the stl file
      */
@@ -128,56 +100,31 @@ public class STL {
                     e.printStackTrace();
                 }
 
-                double mx = m.position.x - m.anchor.x;
-                double my = m.position.y - m.anchor.y;
-                double mz = m.position.z - m.anchor.z;
-
-                double rx = m.rotation.x;
-                double ry = m.rotation.y;
-                double rz = m.rotation.z;
-                double rotationAngle = Math.sqrt(rx * rx + ry * ry + rz * rz);
-
-                if (rotationAngle != 0) {
-                    rx /= rotationAngle;
-                    ry /= rotationAngle;
-                    rz /= rotationAngle;
-                }
-
-                double sx = m.scale.x;
-                double sy = m.scale.y;
-                double sz = m.scale.z;
+                Point offset = m.position.subtract(m.anchor);
+                Point rotationAngles = this.radians ? m.rotation : m.rotation.multiply(Math.PI / 180.0);
+                Point scale = m.scale;
 
                 for (Triangle t : m.triangles) {
-                    Point rotatedNormal = (rotationAngle != 0) ? rotatePoint(t.normal, rx, ry, rz, rotationAngle)
-                            : t.normal;
+                    Point rotatedNormal = t.normal.rotate(rotationAngles, m.anchor);
+                    Point translatedNormal = rotatedNormal.add(offset);
 
-                    double tx = rotatedNormal.x + mx;
-                    double ty = rotatedNormal.y + my;
-                    double tz = rotatedNormal.z + mz;
-                    writer.write(String.format("  facet normal %f %f %f\r\n", tx, ty, tz));
+                    writer.write(String.format("  facet normal %f %f %f\r\n", 
+                        translatedNormal.x, translatedNormal.y, translatedNormal.z));
                     writer.write("    outer loop\r\n");
 
                     for (Point v : List.of(t.p3, t.p2, t.p1)) {
-                        double x = v.x * sx;
-                        double y = v.y * sy;
-                        double z = v.z * sz;
+                        Point scaledVertex = v.multiply(scale);
+                        Point rotatedVertex = scaledVertex.rotate(rotationAngles, m.anchor);
+                        Point translatedVertex = rotatedVertex.add(offset);
 
-                        Point transformedVertex = (rotationAngle != 0)
-                                ? rotatePoint(new Point(x, y, z), rx, ry, rz, rotationAngle)
-                                : new Point(x, y, z);
-
-                        transformedVertex.x += mx;
-                        transformedVertex.y += my;
-                        transformedVertex.z += mz;
-
-                        if (transformedVertex.x > this.w / 2 || transformedVertex.x < -this.w / 2
-                                || transformedVertex.y > this.h / 2 || transformedVertex.y < -this.h / 2
-                                || transformedVertex.z > this.d || transformedVertex.z < 0) {
+                        if (translatedVertex.x > this.w / 2 || translatedVertex.x < -this.w / 2
+                                || translatedVertex.y > this.h / 2 || translatedVertex.y < -this.h / 2
+                                || translatedVertex.z > this.d || translatedVertex.z < 0) {
                             boundErrors++;
                         }
 
-                        writer.write(String.format("      vertex %f %f %f\r\n", transformedVertex.x,
-                                transformedVertex.y, transformedVertex.z));
+                        writer.write(String.format("      vertex %f %f %f\r\n",
+                            translatedVertex.x, translatedVertex.y, translatedVertex.z));
                     }
 
                     writer.write("    endloop\r\n  endfacet\r\n");
