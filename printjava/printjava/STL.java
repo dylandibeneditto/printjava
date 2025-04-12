@@ -100,6 +100,8 @@ public class STL {
                     e.printStackTrace();
                 }
 
+                writer.write(String.format("solid %s\r\n", i));
+
                 Point offset = m.position.subtract(m.anchor);
                 Point rotationAngles = this.radians ? m.rotation : m.rotation.multiply(Math.PI / 180.0);
                 Point scale = m.scale;
