@@ -1,7 +1,5 @@
 package printjava;
 
-import printjava.Triangle;
-
 public class Quad {
     // 4 points on the quad, will use these to construct 2 triangles
     public Point p1;

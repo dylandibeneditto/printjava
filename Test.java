@@ -18,8 +18,8 @@ public class Test {
         stl.write();
     }
 
-    public static double f(double x, double y) {
-        return Math.sqrt(x * x + y * y);
+    public static double f(Point2 p) {
+        return Math.sqrt(p.x * p.x + p.y * p.y);
     }
 
     public static double g(Point p) {
