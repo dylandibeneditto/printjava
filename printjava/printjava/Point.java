@@ -9,6 +9,18 @@ public class Point {
 		this.z = z;
 	}
 
+	public Point(Point2 p) {
+		this.x = p.x;
+		this.y = 0;
+		this.z = p.y;
+	}
+
+	public Point(Point2 p, double y) {
+		this.x = p.x;
+		this.y = y;
+		this.z = p.y;
+	}
+
 	/**
 	 * sets all values of the point
 	 */
