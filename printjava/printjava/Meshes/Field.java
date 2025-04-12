@@ -9,6 +9,7 @@ import printjava.Point;
 public class Field extends Mesh {
     double width, height, depth;
     int xDivisions, yDivisions, zDivisions;
+    Function<Point, Double> f;
 
     private class PointValue extends Point {
         public double value;
@@ -27,7 +28,7 @@ public class Field extends Mesh {
         this.xDivisions = 100;
         this.yDivisions = 100;
         this.zDivisions = 100;
-        this.generate(f);
+        this.f = f;
     }
 
     public Field(Function<Point, Double> f, double width, double height, double depth) {
@@ -38,7 +39,7 @@ public class Field extends Mesh {
         this.xDivisions = (int) width * 100;
         this.yDivisions = (int) height * 100;
         this.zDivisions = (int) depth * 100;
-        this.generate(f);
+        this.f = f;
     }
 
     public Field(Function<Point, Double> f, double width, double height, double depth, int xDivisions, int yDivisions, int zDivisions) {
@@ -49,7 +50,7 @@ public class Field extends Mesh {
         this.xDivisions = xDivisions;
         this.yDivisions = yDivisions;
         this.zDivisions = zDivisions;
-        this.generate(f);
+        this.f = f;
     }
 
     /**
@@ -59,7 +60,7 @@ public class Field extends Mesh {
      * https://paulbourke.net/geometry/polygonise/ 
      * https://youtu.be/M3iI2l0ltbE?si=Xa66wd-XEU3Fn80s
      */
-    private void generate(Function<Point, Double> f) {
+    public void generate() {
         // loop through each cube in the field
         for(int i = 0; i < xDivisions - 1; i++) {
             for(int j = 0; j < yDivisions - 1; j++) {
@@ -111,7 +112,7 @@ public class Field extends Mesh {
                         Point p3 = vertlist[TRIANGLE_TABLE[cubeIndex][t + 2]];
 
                         if (p1 != null && p2 != null && p3 != null) {
-                            add(new Triangle(p3, p2, p1));
+                            add(new Triangle(p1, p2, p3));
                         }
                     }
 
