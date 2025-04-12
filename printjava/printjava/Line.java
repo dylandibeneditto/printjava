@@ -10,6 +10,10 @@ public class Line {
         this.points = new ArrayList<Point2>();
     }
 
+    public Line(ArrayList<Point2> points) {
+        this.points = points;
+    }
+
     public void add(Point2 p) {
         this.points.add(p);
     }
