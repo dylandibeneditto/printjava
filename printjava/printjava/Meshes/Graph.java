@@ -3,7 +3,8 @@ package printjava.Meshes;
 import printjava.Mesh;
 import printjava.Triangle;
 import printjava.Point;
-import java.util.function.BiFunction;
+import printjava.Point2;
+import java.util.function.Function;
 
 public class Graph extends Mesh {
     // describes the bounds of the graph
@@ -13,12 +14,14 @@ public class Graph extends Mesh {
     // describes the number of divisions in the x and y directions
     private int xDivisions, yDivisions;
 
+    private Function<Point2, Double> f;
+
     // whether or not to have a base, and how tall the base is
     private boolean base = true;
     private double baseHeight = 0.1;
 
     // new Graph(Main::f);
-    public Graph(BiFunction<Double, Double, Double> f) {
+    public Graph(Function<Point2, Double> f) {
         super();
         this.startX = -10;
         this.startY = -10;
@@ -29,11 +32,11 @@ public class Graph extends Mesh {
         this.depth = 1;
         this.xDivisions = 100;
         this.yDivisions = 100;
-        this.generate(f);
+        this.f = f;
     }
 
     // new Graph(Main::f, -10, -10, 10, 10);
-    public Graph(BiFunction<Double, Double, Double> f, double startX, double startY, double endX, double endY) {
+    public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY) {
         super();
         this.startX = startX;
         this.startY = startY;
@@ -44,11 +47,11 @@ public class Graph extends Mesh {
         this.depth = 1;
         this.xDivisions = 100;
         this.yDivisions = 100;
-        this.generate(f);
+        this.f = f;
     }
 
     // new Graph(Main::f, -10, -10, 10, 10, 1, 1, 1);
-    public Graph(BiFunction<Double, Double, Double> f, double startX, double startY, double endX, double endY, double width, double height, double depth) {
+    public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY, double width, double height, double depth) {
         super();
         this.startX = startX;
         this.startY = startY;
@@ -59,11 +62,11 @@ public class Graph extends Mesh {
         this.depth = depth;
         this.xDivisions = 100;
         this.yDivisions = 100;
-        this.generate(f);
+        this.f = f;
     }
 
     // new Graph(Main::f, -10, -10, 10, 10, 1, 1, 1, 100, 100);
-    public Graph(BiFunction<Double, Double, Double> f, double startX, double startY, double endX, double endY, double width, double height, double depth, int xDivisions, int yDivisions) {
+    public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY, double width, double height, double depth, int xDivisions, int yDivisions) {
         super();
         this.startX = startX;
         this.startY = startY;
@@ -74,11 +77,11 @@ public class Graph extends Mesh {
         this.depth = depth;
         this.xDivisions = xDivisions;
         this.yDivisions = yDivisions;
-        this.generate(f);
+        this.f = f;
     }
 
     // new Graph(Main::f, -10, -10, 10, 10, 1, 1, 1, 100, 100, true, 0.1);
-    public Graph(BiFunction<Double, Double, Double> f, double startX, double startY, double endX, double endY, double width, double height, double depth, int xDivisions, int yDivisions, boolean base, double baseHeight) {
+    public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY, double width, double height, double depth, int xDivisions, int yDivisions, boolean base, double baseHeight) {
         super();
         this.startX = startX;
         this.startY = startY;
@@ -91,13 +94,13 @@ public class Graph extends Mesh {
         this.yDivisions = yDivisions;
         this.base = base;
         this.baseHeight = baseHeight;
-        this.generate(f);
+        this.f = f;
     }
 
     /**
      * evaluates the function at each subdivision point and creates a triange for each
      */
-    private void generate(BiFunction<Double, Double, Double> f) {
+    public void generate() {
         double dx = (this.endX - this.startX) / this.xDivisions;
         double dy = (this.endY - this.startY) / this.yDivisions;
     
@@ -114,7 +117,7 @@ public class Graph extends Mesh {
             double x0 = this.startX + i * dx;
             for (int j = 0; j <= this.yDivisions; j++) {
                 double y0 = this.startY + j * dy;
-                double val = f.apply(x0, y0);
+                double val = f.apply(new Point2(x0, y0));
                 points[i][j] = val;
     
                 if (val > top) top = val;

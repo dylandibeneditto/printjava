@@ -1,27 +1,16 @@
 package printjava;
 
 public class Point2 {
-    public int x;
-    public int y;
+    public double x;
+    public double y;
 
-    public Point2(int x, int y) {
+    public Point2(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public String toString() {
-        return "Point2{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+    public void set(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 }
