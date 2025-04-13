@@ -15,6 +15,8 @@ public class STL {
     private boolean metric = true;
     // whether to rotate meshes in radians
     public boolean radians = true;
+    // whether to use ascii or binary format
+    public boolean ascii = false;
     // the width, height, and depth of the printer bed
     public double w = 26.5;
     public double h = 26.5;
@@ -72,9 +74,24 @@ public class STL {
     }
 
     /**
-     * writes to the stl file
+     * adds an array of meshes and mesh subclasses to the list of meshes
      */
-    public void write() {
+    public void add(Mesh[] meshes) {
+        for (Mesh m : meshes) {
+            this.meshes.add(m);
+        }
+    }
+
+    /**
+     * adds and arraylist of meshes and mesh subclasses to the list of meshes
+     */
+    public void add(ArrayList<Mesh> meshes) {
+        for (Mesh m : meshes) {
+            this.meshes.add(m);
+        }
+    }
+
+    private void writeAscii() {
         String filePath = this.name + ".stl";
 
         File file = new File(filePath);
@@ -88,6 +105,8 @@ public class STL {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (int i = 0; i < this.meshes.size(); i++) {
+                if (this.verbose)
+                    System.out.println("Mesh " + i);
                 Mesh m = this.meshes.get(i);
 
                 try {
@@ -132,6 +151,107 @@ public class STL {
                     writer.write("    endloop\r\n  endfacet\r\n");
                 }
                 writer.write(String.format("endsolid %s\r\n", i));
+            }
+
+            if (boundErrors > 0) {
+                System.out.println("WARNING: " + boundErrors + " vertices are outside the bounds of your printer.");
+            }
+            if (this.verbose)
+                System.out.println("File saved as '" + filePath + "'");
+
+        } catch (IOException e) {
+            System.err.println("Error writing STL file: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void writeLittleEndianFloat(DataOutputStream writer, float value) throws IOException {
+        int bits = Float.floatToIntBits(value);
+        writer.writeByte(bits & 0xFF);
+        writer.writeByte((bits >> 8) & 0xFF);
+        writer.writeByte((bits >> 16) & 0xFF);
+        writer.writeByte((bits >> 24) & 0xFF);
+    }
+
+    private void writePoint(DataOutputStream writer, Point p) throws IOException {
+        writeLittleEndianFloat(writer, (float) p.x);
+        writeLittleEndianFloat(writer, (float) p.y);
+        writeLittleEndianFloat(writer, (float) p.z);
+    }
+
+    /**
+     * writes to the stl file
+     */
+    public void write() {
+
+        if (this.ascii) {
+            this.writeAscii();
+            return;
+        }
+
+        String filePath = this.name + ".stl";
+
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        int boundErrors = 0;
+        if (this.verbose)
+            System.out.println("Beginning write to '" + filePath + "'");
+
+        try (DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(filePath)))) {
+
+            byte[] header = new byte[80];
+            writer.write(header);
+
+            int triangleCount = 0;
+            for(Mesh m : this.meshes) {
+                try {
+                    Method method = m.getClass().getMethod("generate");
+                    method.setAccessible(true);
+                    method.invoke(m);
+                } catch (NoSuchMethodException e) {
+                    //e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Mesh " + m);
+                triangleCount += m.triangles.size();
+            }
+            writer.writeInt(Integer.reverseBytes(triangleCount));
+
+            for (int i = 0; i < this.meshes.size(); i++) {
+                Mesh m = this.meshes.get(i);
+
+                System.out.println("Mesh 2 " + m);
+
+                Point offset = m.position.subtract(m.anchor);
+                Point rotationAngles = this.radians ? m.rotation : m.rotation.multiply(Math.PI / 180.0);
+                Point scale = m.scale;
+
+                for (Triangle t : m.triangles) {
+                    Point rotatedNormal = t.normal.rotate(rotationAngles, m.anchor);
+                    Point translatedNormal = rotatedNormal.add(offset);
+
+                    writePoint(writer, translatedNormal);
+
+                    for (Point v : List.of(t.p1, t.p2, t.p3)) {
+                        Point scaledVertex = v.multiply(scale);
+                        Point rotatedVertex = scaledVertex.rotate(rotationAngles, m.anchor);
+                        Point translatedVertex = rotatedVertex.add(offset);
+
+                        if (translatedVertex.x > this.w / 2 || translatedVertex.x < -this.w / 2
+                                || translatedVertex.y > this.h / 2 || translatedVertex.y < -this.h / 2
+                                || translatedVertex.z > this.d || translatedVertex.z < 0) {
+                            boundErrors++;
+                        }
+
+                        writePoint(writer, translatedVertex);
+                    }
+
+                    writer.writeShort(0);
+                }
             }
 
             if (boundErrors > 0) {
