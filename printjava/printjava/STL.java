@@ -18,9 +18,9 @@ public class STL {
     // whether to use ascii or binary format
     public boolean ascii = false;
     // the width, height, and depth of the printer bed
-    public double w = 26.5;
-    public double h = 26.5;
-    public double d = 26.5;
+    public double width = 26.5;
+    public double height = 26.5;
+    public double depth = 26.5;
 
     // new STL();
     public STL() {
@@ -35,16 +35,16 @@ public class STL {
     }
 
     // new STL("name", 10, 10, 10);
-    public STL(String name, double w, double h, double d) {
+    public STL(String name, double width, double height, double depth) {
         this.name = name;
         this.meshes = new ArrayList<>();
-        this.w = w;
-        this.h = h;
-        this.d = d;
+        this.width = width;
+        this.height = height;
+        this.depth = depth;
     }
 
     /**
-     * convert inches to centimeters and vice versa 
+     * convert inches to centimeters and vice versa
      */
     private double convertSize(double value, boolean toMetric) {
         return toMetric ? value * 2.54 : value / 2.54;
@@ -55,9 +55,9 @@ public class STL {
      */
     public void setMetric(boolean metric) {
         if (this.metric != metric) {
-            this.w = convertSize(this.w, metric);
-            this.h = convertSize(this.h, metric);
-            this.d = convertSize(this.d, metric);
+            this.width = convertSize(this.width, metric);
+            this.height = convertSize(this.height, metric);
+            this.depth = convertSize(this.depth, metric);
         }
         this.metric = metric;
     }
@@ -66,8 +66,8 @@ public class STL {
         return this.metric;
     }
 
-    /** 
-     * adds any mesh and mesh subclasses to the list of meshes 
+    /**
+     * adds any mesh and mesh subclasses to the list of meshes
      */
     public void add(Mesh m) {
         this.meshes.add(m);
@@ -91,6 +91,9 @@ public class STL {
         }
     }
 
+    /**
+     * writes to the stl file in ascii format
+     */
     private void writeAscii() {
         String filePath = this.name + ".stl";
 
@@ -105,16 +108,17 @@ public class STL {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (int i = 0; i < this.meshes.size(); i++) {
-                if (this.verbose)
-                    System.out.println("Mesh " + i);
                 Mesh m = this.meshes.get(i);
+
+                if (this.verbose)
+                    System.out.println("\t[" + (i+1) + "/" + this.meshes.size() + "] Generating " + m.getClass().getSimpleName() + "...");
 
                 try {
                     Method method = m.getClass().getMethod("generate");
                     method.setAccessible(true);
                     method.invoke(m);
                 } catch (NoSuchMethodException e) {
-                    //e.printStackTrace();
+                    // e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -129,8 +133,8 @@ public class STL {
                     Point rotatedNormal = t.normal.rotate(rotationAngles, m.anchor);
                     Point translatedNormal = rotatedNormal.add(offset);
 
-                    writer.write(String.format("  facet normal %f %f %f\r\n", 
-                        translatedNormal.x, translatedNormal.y, translatedNormal.z));
+                    writer.write(String.format("  facet normal %f %f %f\r\n",
+                            translatedNormal.x, translatedNormal.y, translatedNormal.z));
                     writer.write("    outer loop\r\n");
 
                     for (Point v : List.of(t.p3, t.p2, t.p1)) {
@@ -138,14 +142,14 @@ public class STL {
                         Point rotatedVertex = scaledVertex.rotate(rotationAngles, m.anchor);
                         Point translatedVertex = rotatedVertex.add(offset);
 
-                        if (translatedVertex.x > this.w / 2 || translatedVertex.x < -this.w / 2
-                                || translatedVertex.y > this.h / 2 || translatedVertex.y < -this.h / 2
-                                || translatedVertex.z > this.d || translatedVertex.z < 0) {
+                        if (translatedVertex.x > this.width / 2 || translatedVertex.x < -this.width / 2
+                                || translatedVertex.y > this.height / 2 || translatedVertex.y < -this.height / 2
+                                || translatedVertex.z > this.depth || translatedVertex.z < 0) {
                             boundErrors++;
                         }
 
                         writer.write(String.format("      vertex %f %f %f\r\n",
-                            translatedVertex.x, translatedVertex.y, translatedVertex.z));
+                                translatedVertex.x, translatedVertex.y, translatedVertex.z));
                     }
 
                     writer.write("    endloop\r\n  endfacet\r\n");
@@ -206,25 +210,25 @@ public class STL {
             writer.write(header);
 
             int triangleCount = 0;
-            for(Mesh m : this.meshes) {
+            for (int i = 0; i < this.meshes.size(); i++) {
+                Mesh m = this.meshes.get(i);
+                if (this.verbose)
+                    System.out.println(" [" + (i+1) + "/" + this.meshes.size() + "] Generating " + m.getClass().getSimpleName() + "...");
                 try {
                     Method method = m.getClass().getMethod("generate");
                     method.setAccessible(true);
                     method.invoke(m);
                 } catch (NoSuchMethodException e) {
-                    //e.printStackTrace();
+                    // e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                System.out.println("Mesh " + m);
                 triangleCount += m.triangles.size();
             }
             writer.writeInt(Integer.reverseBytes(triangleCount));
 
             for (int i = 0; i < this.meshes.size(); i++) {
                 Mesh m = this.meshes.get(i);
-
-                System.out.println("Mesh 2 " + m);
 
                 Point offset = m.position.subtract(m.anchor);
                 Point rotationAngles = this.radians ? m.rotation : m.rotation.multiply(Math.PI / 180.0);
@@ -241,9 +245,9 @@ public class STL {
                         Point rotatedVertex = scaledVertex.rotate(rotationAngles, m.anchor);
                         Point translatedVertex = rotatedVertex.add(offset);
 
-                        if (translatedVertex.x > this.w / 2 || translatedVertex.x < -this.w / 2
-                                || translatedVertex.y > this.h / 2 || translatedVertex.y < -this.h / 2
-                                || translatedVertex.z > this.d || translatedVertex.z < 0) {
+                        if (translatedVertex.x > this.width / 2 || translatedVertex.x < -this.width / 2
+                                || translatedVertex.y > this.height / 2 || translatedVertex.y < -this.height / 2
+                                || translatedVertex.z > this.depth || translatedVertex.z < 0) {
                             boundErrors++;
                         }
 
@@ -272,8 +276,8 @@ public class STL {
                 "STL: %s (%d meshes)\n%.2fx%.2f %s",
                 this.name,
                 this.meshes.size(),
-                this.w,
-                this.h,
+                this.width,
+                this.height,
                 this.metric ? "cm" : "in");
     }
 }
