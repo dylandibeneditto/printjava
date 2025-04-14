@@ -1,7 +1,7 @@
 package printjava.Meshes;
 
 import printjava.Mesh;
-import printjava.Triangle;
+import printjava.Quad;
 import printjava.Point;
 import printjava.Point2;
 import java.util.function.Function;
@@ -51,7 +51,8 @@ public class Graph extends Mesh {
     }
 
     // new Graph(Main::f, -10, -10, 10, 10, 1, 1, 1);
-    public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY, double width, double height, double depth) {
+    public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY, double width,
+            double height, double depth) {
         super();
         this.startX = startX;
         this.startY = startY;
@@ -66,7 +67,8 @@ public class Graph extends Mesh {
     }
 
     // new Graph(Main::f, -10, -10, 10, 10, 1, 1, 1, 100, 100);
-    public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY, double width, double height, double depth, int xDivisions, int yDivisions) {
+    public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY, double width,
+            double height, double depth, int xDivisions, int yDivisions) {
         super();
         this.startX = startX;
         this.startY = startY;
@@ -81,7 +83,8 @@ public class Graph extends Mesh {
     }
 
     // new Graph(Main::f, -10, -10, 10, 10, 1, 1, 1, 100, 100, true, 0.1);
-    public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY, double width, double height, double depth, int xDivisions, int yDivisions, boolean base, double baseHeight) {
+    public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY, double width,
+            double height, double depth, int xDivisions, int yDivisions, boolean base, double baseHeight) {
         super();
         this.startX = startX;
         this.startY = startY;
@@ -98,20 +101,21 @@ public class Graph extends Mesh {
     }
 
     /**
-     * evaluates the function at each subdivision point and creates a triange for each
+     * evaluates the function at each subdivision point and creates a triange for
+     * each
      */
     public void generate() {
         double dx = (this.endX - this.startX) / this.xDivisions;
         double dy = (this.endY - this.startY) / this.yDivisions;
-    
+
         double rdx = this.width / this.xDivisions;
         double rdy = this.height / this.yDivisions;
-    
+
         double[][] points = new double[this.xDivisions + 1][this.yDivisions + 1];
-    
+
         double top = Double.NEGATIVE_INFINITY;
         double bottom = Double.POSITIVE_INFINITY;
-    
+
         // compute function values
         for (int i = 0; i <= this.xDivisions; i++) {
             double x0 = this.startX + i * dx;
@@ -119,58 +123,62 @@ public class Graph extends Mesh {
                 double y0 = this.startY + j * dy;
                 double val = f.apply(new Point2(x0, y0));
                 points[i][j] = val;
-    
-                if (val > top) top = val;
-                if (val < bottom) bottom = val;
+
+                if (val > top)
+                    top = val;
+                if (val < bottom)
+                    bottom = val;
             }
         }
-    
+
         double range = top - bottom;
-        if (range == 0) range = 1;
-    
-        // create triangles from normalized values
+        if (range == 0)
+            range = 1;
+
+        // create quads from normalized values
         for (int i = 0; i < this.xDivisions; i++) {
             double x0 = -this.width / 2 + i * rdx;
             double x1 = -this.width / 2 + (i + 1) * rdx;
-        
+
             for (int j = 0; j < this.yDivisions; j++) {
                 double y0 = -this.height / 2 + j * rdy;
                 double y1 = -this.height / 2 + (j + 1) * rdy;
-        
+
                 // normalized points
                 double h00 = this.baseHeight + ((points[i][j] - bottom) / range) * (this.depth - this.baseHeight);
                 double h10 = this.baseHeight + ((points[i + 1][j] - bottom) / range) * (this.depth - this.baseHeight);
-                double h11 = this.baseHeight + ((points[i + 1][j + 1] - bottom) / range) * (this.depth - this.baseHeight);
+                double h11 = this.baseHeight
+                        + ((points[i + 1][j + 1] - bottom) / range) * (this.depth - this.baseHeight);
                 double h01 = this.baseHeight + ((points[i][j + 1] - bottom) / range) * (this.depth - this.baseHeight);
-        
+
                 // add walls
                 if (this.base && (i == 0 || i == this.xDivisions - 1 || j == 0 || j == this.yDivisions - 1)) {
                     if (i == 0) {
-                        add(new Triangle(new Point(x0, 0, y1), new Point(x0, 0, y0), new Point(x0, h00, y0)));
-                        add(new Triangle(new Point(x0, h01, y1), new Point(x0, 0, y1), new Point(x0, h00, y0)));
+                        add(new Quad(new Point(x0, h01, y1), new Point(x0, h00, y0), new Point(x0, 0, y0),
+                                new Point(x0, 0, y1)));
                     }
                     if (i == this.xDivisions - 1) {
-                        add(new Triangle(new Point(x1, 0, y1), new Point(x1, h11, y1), new Point(x1, h10, y0)));
-                        add(new Triangle(new Point(x1, 0, y0), new Point(x1, 0, y1), new Point(x1, h10, y0)));
+                        add(new Quad(new Point(x1, h10, y0), new Point(x1, h11, y1), new Point(x1, 0, y1),
+                                new Point(x1, 0, y0)));
                     }
                     if (j == 0) {
-                        add(new Triangle(new Point(x1, 0, y0), new Point(x1, h10, y0), new Point(x0, h00, y0)));
-                        add(new Triangle(new Point(x0, 0, y0), new Point(x1, 0, y0), new Point(x0, h00, y0)));
+                        add(new Quad(new Point(x0, h00, y0), new Point(x1, h10, y0), new Point(x1, 0, y0),
+                                new Point(x0, 0, y0)));
                     }
                     if (j == this.yDivisions - 1) {
-                        add(new Triangle(new Point(x1, h11, y1), new Point(x1, 0, y1), new Point(x0, 0, y1)));
-                        add(new Triangle(new Point(x0, h01, y1), new Point(x1, h11, y1), new Point(x0, 0, y1)));
+                        add(new Quad(new Point(x0, 0, y1), new Point(x1, 0, y1), new Point(x1, h11, y1),
+                                new Point(x0, h01, y1)));
                     }
                 }
-        
-                // add surface triangles
-                add(new Triangle(new Point(x0, h00, y0), new Point(x1, h10, y0), new Point(x1, h11, y1)));
-                add(new Triangle(new Point(x0, h00, y0), new Point(x1, h11, y1), new Point(x0, h01, y1)));
+
+                // add surface quad
+                add(new Quad(new Point(x0, h01, y1), new Point(x1, h11, y1), new Point(x1, h10, y0),
+                        new Point(x0, h00, y0)));
             }
         }
 
         // bottom face
-        add(new Triangle(new Point(this.width / 2, 0, this.height / 2), new Point(this.width / 2, 0, -this.height / 2), new Point(-this.width / 2, 0, -this.height / 2)));
-        add(new Triangle(new Point(-this.width / 2, 0, this.height / 2), new Point(this.width / 2, 0, this.height / 2), new Point(-this.width / 2, 0, -this.height / 2)));
+        add(new Quad(new Point(-this.width / 2, 0, -this.height / 2), new Point(this.width / 2, 0, -this.height / 2),
+                new Point(this.width / 2, 0, this.height / 2), new Point(-this.width / 2, 0, this.height / 2)));
     }
 }

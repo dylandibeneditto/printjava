@@ -107,9 +107,9 @@ public class Field extends Mesh {
                     for (int t = 0; TRIANGLE_TABLE[cubeIndex][t] != -1; t += 3) {
                         int index1 = TRIANGLE_TABLE[cubeIndex][t];
                         if (index1 == -1 || vertlist[index1] == null) continue;
-                        Point p1 = vertlist[index1];
+                        Point p1 = vertlist[TRIANGLE_TABLE[cubeIndex][t + 2]];
                         Point p2 = vertlist[TRIANGLE_TABLE[cubeIndex][t + 1]];
-                        Point p3 = vertlist[TRIANGLE_TABLE[cubeIndex][t + 2]];
+                        Point p3 = vertlist[index1];
 
                         if (p1 != null && p2 != null && p3 != null) {
                             add(new Triangle(p1, p2, p3));

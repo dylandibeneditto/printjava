@@ -77,8 +77,8 @@ public class Sphere extends Mesh {
                 int p0 = i * (this.longitude + 1) + j;
                 int p1 = p0 + this.longitude + 1;
 
-                add(new Triangle(points.get(p0), points.get(p1), points.get(p0 + 1)));
-                add(new Triangle(points.get(p1), points.get(p1 + 1), points.get(p0 + 1)));
+                add(new Triangle(points.get(p0 + 1), points.get(p1), points.get(p0)));
+                add(new Triangle(points.get(p0 + 1), points.get(p1 + 1), points.get(p1)));
             }
         }
     }

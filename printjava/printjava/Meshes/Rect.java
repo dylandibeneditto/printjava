@@ -2,7 +2,7 @@ package printjava.Meshes;
 
 import printjava.Mesh;
 import printjava.Point;
-import printjava.Triangle;
+import printjava.Quad;
 
 public class Rect extends Mesh {
     private double width, height, depth;
@@ -46,7 +46,6 @@ public class Rect extends Mesh {
      * generates all the triangles that make up a rectangular prism
      */
     public void generate() {
-        
 
         double halfWidth = this.width / 2.0;
         double halfHeight = this.height / 2.0;
@@ -61,17 +60,12 @@ public class Rect extends Mesh {
         Point v6 = new Point(halfWidth, halfHeight, halfDepth);
         Point v7 = new Point(-halfWidth, halfHeight, halfDepth);
 
-        add(new Triangle(v0, v1, v2));
-        add(new Triangle(v0, v2, v3));
-        add(new Triangle(v1, v5, v6));
-        add(new Triangle(v1, v6, v2));
-        add(new Triangle(v5, v4, v7));
-        add(new Triangle(v5, v7, v6));
-        add(new Triangle(v4, v0, v3));
-        add(new Triangle(v4, v3, v7));
-        add(new Triangle(v3, v2, v6));
-        add(new Triangle(v3, v6, v7));
-        add(new Triangle(v5, v1, v0));
-        add(new Triangle(v4, v5, v0));        
+        add(new Quad(v3, v2, v1, v0));
+        add(new Quad(v2, v6, v5, v1));
+        add(new Quad(v6, v7, v4, v5));
+        add(new Quad(v7, v3, v0, v4));
+        add(new Quad(v7, v6, v2, v3));
+        add(new Quad(v1, v5, v4, v0));
     }
+
 }

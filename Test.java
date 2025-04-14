@@ -14,7 +14,7 @@ public class Test {
         shape.add(new Point2(1, 1));
         shape.add(new Point2(1, -1));
 
-        ArrayList<Mesh> meshes = new ArrayList<>(Arrays.asList(shape, new Cone(), new Sphere(), new Pyramid(), new Cylinder(), new Graph(Test::f), new Field(Test::g), new Plane(), new Rect()));
+        ArrayList<Mesh> meshes = new ArrayList<>(Arrays.asList(new Extrude(shape), shape, new Cone(), new Sphere(), new Pyramid(), new Cylinder(), new Graph(Test::f), new Field(Test::g), new Plane(), new Rect()));
 
         for (int i = 0; i < meshes.size(); i++) {
             meshes.get(i).position.set((i%10)*3, 0, (i/10)*3);

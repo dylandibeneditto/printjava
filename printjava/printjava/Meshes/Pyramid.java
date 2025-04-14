@@ -62,34 +62,16 @@ public class Pyramid extends Mesh {
         double halfBy = this.by / 2.0;
         double halfHeight = this.height / 2.0;
 
-        add(new Triangle(
-                new Point(-halfBx, -halfHeight, -halfBy),
-                new Point(halfBx, -halfHeight, -halfBy),
-                new Point(0, halfHeight, 0)));
+        add(new Triangle(new Point(0, halfHeight, 0), new Point(halfBx, -halfHeight, -halfBy),  new Point(-halfBx, -halfHeight, -halfBy)));
 
-        add(new Triangle(
-                new Point(halfBx, -halfHeight, -halfBy),
-                new Point(halfBx, -halfHeight, halfBy),
-                new Point(0, halfHeight, 0)));
+        add(new Triangle(new Point(0, halfHeight, 0), new Point(halfBx, -halfHeight, halfBy),  new Point(halfBx, -halfHeight, -halfBy)));
 
-        add(new Triangle(
-                new Point(halfBx, -halfHeight, halfBy),
-                new Point(-halfBx, -halfHeight, halfBy),
-                new Point(0, halfHeight, 0)));
+        add(new Triangle(new Point(0, halfHeight, 0), new Point(-halfBx, -halfHeight, halfBy),  new Point(halfBx, -halfHeight, halfBy)));
 
-        add(new Triangle(
-                new Point(-halfBx, -halfHeight, halfBy),
-                new Point(-halfBx, -halfHeight, -halfBy),
-                new Point(0, halfHeight, 0)));
+        add(new Triangle(new Point(0, halfHeight, 0), new Point(-halfBx, -halfHeight, -halfBy),  new Point(-halfBx, -halfHeight, halfBy)));
 
-        add(new Triangle(
-                new Point(halfBx, -halfHeight, halfBy),
-                new Point(halfBx, -halfHeight, -halfBy),
-                new Point(-halfBx, -halfHeight, -halfBy)));
+        add(new Triangle(new Point(-halfBx, -halfHeight, -halfBy), new Point(halfBx, -halfHeight, -halfBy),  new Point(halfBx, -halfHeight, halfBy)));
 
-        add(new Triangle(
-                new Point(-halfBx, -halfHeight, -halfBy),
-                new Point(-halfBx, -halfHeight, halfBy),
-                new Point(halfBx, -halfHeight, halfBy)));
+        add(new Triangle(new Point(halfBx, -halfHeight, halfBy), new Point(-halfBx, -halfHeight, halfBy),  new Point(-halfBx, -halfHeight, -halfBy)));
     }
 }

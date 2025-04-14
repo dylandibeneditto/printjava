@@ -38,16 +38,8 @@ public class Plane extends Mesh {
         double halfWidth = this.width / 2;
         double halfHeight = this.height / 2;
 
-        add(new Triangle(
-            new Point(-halfWidth, 0, -halfHeight),
-            new Point(halfWidth, 0, -halfHeight),
-            new Point(halfWidth, 0, halfHeight)
-        ));
+        add(new Triangle(new Point(halfWidth, 0, halfHeight), new Point(halfWidth, 0, -halfHeight),  new Point(-halfWidth, 0, -halfHeight)));
 
-        add(new Triangle(
-            new Point(-halfWidth, 0, -halfHeight),
-            new Point(halfWidth, 0, halfHeight),
-            new Point(-halfWidth, 0, halfHeight)
-        ));
+        add(new Triangle(new Point(-halfWidth, 0, halfHeight), new Point(halfWidth, 0, halfHeight),  new Point(-halfWidth, 0, -halfHeight)));
     }
 }

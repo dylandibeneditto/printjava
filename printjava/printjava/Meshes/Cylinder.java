@@ -71,10 +71,10 @@ public class Cylinder extends Mesh {
             Point bottom0 = bottomPoints.get(i);
             Point bottom1 = bottomPoints.get((i + 1) % this.resolution);
 
-            add(new Triangle(top0, top1, topCenter));
-            add(new Triangle(bottom1, bottom0, bottomCenter));
-            add(new Triangle(bottom1, top1, top0));
-            add(new Triangle(bottom0, bottom1, top0));
+            add(new Triangle(topCenter, top1, top0));
+            add(new Triangle(bottomCenter, bottom0, bottom1));
+            add(new Triangle(top0, top1, bottom1));
+            add(new Triangle(top0, bottom1, bottom0));
         }
     }
 }

@@ -26,7 +26,7 @@ public class Shape extends Mesh {
         for(int i = 0; i < this.points.size(); i++) {
             Point2 p1 = this.points.get(i);
             Point2 p2 = this.points.get((i + 1) % this.points.size());
-            super.add(new Triangle(new Point(0,0,0), new Point(p2), new Point(p1)));
+            super.add(new Triangle(new Point(p1), new Point(p2), new Point(0,0,0)));
         }
     }
 }

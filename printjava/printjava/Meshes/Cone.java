@@ -47,8 +47,6 @@ public class Cone extends Mesh {
      * generates all the triangles that make up a cone
      */
     public void generate() {
-        
-
         Point topCenter = new Point(0, this.height, 0);
         Point bottomCenter = new Point(0, 0, 0);
 
@@ -64,8 +62,8 @@ public class Cone extends Mesh {
             Point top0 = new Point(x0, 0, z0);
             Point top1 = new Point(x1, 0, z1);
 
-            add(new Triangle(top0, top1, topCenter));
-            add(new Triangle(bottomCenter, top1, top0));
+            add(new Triangle(topCenter, top1, top0));
+            add(new Triangle(top0, top1, bottomCenter));
         }
     }
 }
