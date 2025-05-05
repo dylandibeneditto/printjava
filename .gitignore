@@ -1,6 +1,7 @@
 .DS_Store
 Main.java
 Main.class
-test.stl
+*.stl
 printjava/printjava/*.class
 printjava/printjava/Meshes/*.class
+Test.java

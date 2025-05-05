@@ -1,0 +1,43 @@
+import java.io.IOException;
+
+// used to import lower level classes (STL, Mesh, Triangle, Points)
+import printjava.*;
+// used to import higher level meshes (Rect, Sphere, Pyramid, etc)
+import printjava.Meshes.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        STL stl = new STL("julia");
+
+        Field field = new Field(Main::julia, 3, 2, 3, 500, 500, 500);
+
+        stl.add(field);
+
+        stl.write();
+    }
+
+    private static double julia(Point p) {
+        if(p.z > 0) {
+            return 1.0;
+        }
+        
+        double real = Math.sqrt(p.x * p.x + p.z * p.z);
+        double imaginary = p.y;
+        int maxIterations = 100;
+
+        double cReal = -0.7;
+        double cImaginary = 0.27015;
+
+        for (int i = 0; i < maxIterations; i++) {
+            double tempReal = real * real - imaginary * imaginary + cReal;
+            imaginary = 2 * real * imaginary + cImaginary;
+            real = tempReal;
+
+            if (real * real + imaginary * imaginary > 4) {
+                return 1.0;
+            }
+        }
+
+        return 0.0;
+    }
+}

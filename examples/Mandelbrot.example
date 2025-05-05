@@ -1,0 +1,42 @@
+import java.io.IOException;
+
+// used to import lower level classes (STL, Mesh, Triangle, Points)
+import printjava.*;
+// used to import higher level meshes (Rect, Sphere, Pyramid, etc)
+import printjava.Meshes.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        STL stl = new STL("mandelbrot");
+
+        Field field = new Field(Main::mandelbrot, 2, 2, 2, 500, 500, 500);
+
+        stl.add(field);
+
+        stl.write();
+    }
+
+    private static double mandelbrot(Point p) {
+        if(p.z > 0) {
+            return 1.0;
+        }
+
+        double real = 0;
+        double imaginary = 0;
+        int maxIterations = 1000;
+
+        double x = Math.sqrt(p.x * p.x + p.z * p.z);
+
+        for (int i = 0; i < maxIterations; i++) {
+            double realTemp = real * real - imaginary * imaginary + (p.y - 0.5);
+            imaginary = 2 * real * imaginary + x;
+            real = realTemp;
+
+            if (real * real + imaginary * imaginary > 4) {
+                return 1;
+            }
+        }
+
+        return 0.0;
+    }
+}
