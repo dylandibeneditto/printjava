@@ -28,7 +28,11 @@ public class Text extends Field {
     private static double minX, minY, maxX, maxY;
     
     public Text(String text, double fontSize, double extrusionHeight) {
-        super((p) -> isInsideText(p, text, fontSize, extrusionHeight), 50, 2, extrusionHeight+1, 10000, 250, 5);
+        this(text, fontSize, extrusionHeight, 200);
+    }
+
+    public Text(String text, double fontSize, double extrusionHeight, int resolution) {
+        super((p) -> isInsideText(p, text, fontSize, 1.0), 50, 2, 1.0+1, 10000, 250, 5);
         
         this.font = new Font("Monospace", Font.TRUETYPE_FONT, (int)resolution); // Base font size
         FontRenderContext frc = new FontRenderContext(null, true, true);
@@ -42,6 +46,8 @@ public class Text extends Field {
         
         initializeTextOutline(text, fontSize, font, frc);
         generateDistanceField();
+
+        this.scale.z = extrusionHeight*2;
     }
     
     private void initializeTextOutline(String text, double fontSize, Font font, FontRenderContext frc) {
@@ -131,5 +137,31 @@ public class Text extends Field {
         int gray = (rgb & 0xFF);
 
         return gray < 128 ? 0.0 : 1.0;
+    }
+
+    // alignment methods
+
+    public void alignLeft() {
+        this.anchor.x = -this.width / 2;
+    }
+
+    public void alignRight() {
+        this.anchor.x = this.width / 2;
+    }
+
+    public void alignCenter() {
+        this.anchor.x = 0;
+    }
+
+    public void alignTop() {
+        this.anchor.y = this.height / 2;
+    }
+
+    public void alignBottom() {
+        this.anchor.y = -this.height / 2;
+    }
+
+    public void alignMiddle() {
+        this.anchor.y = 0;
     }
 }
