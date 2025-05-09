@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.RenderingHints;
+import java.io.File;
+import java.io.IOException;
 
 public class Text extends Field {
     private Font font;
@@ -32,9 +34,21 @@ public class Text extends Field {
     }
 
     public Text(String text, double fontSize, double extrusionHeight, int resolution) {
+        this(text, fontSize, extrusionHeight, resolution, new Font("Monospace", Font.BOLD, (int)resolution));
+    }
+
+    public Text(String text, double fontSize, double extrusionHeight, String fontPath) throws IOException {
+        this(text, fontSize, extrusionHeight, 200, loadCustomFont(fontPath, 200));
+    }
+
+    public Text(String text, double fontSize, double extrusionHeight, int resolution, String fontPath) throws IOException {
+        this(text, fontSize, extrusionHeight, resolution, loadCustomFont(fontPath, resolution));
+    }
+
+    private Text(String text, double fontSize, double extrusionHeight, int resolution, Font font) {
         super((p) -> isInsideText(p, text, fontSize, 1.0), 50, 2, 1.0+1, 10000, 250, 5);
         
-        this.font = new Font("Monospace", Font.TRUETYPE_FONT, (int)resolution); // Base font size
+        this.font = font;
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
         double w = this.font.getStringBounds(text, frc).getWidth() * fontSize / resolution;
@@ -48,6 +62,15 @@ public class Text extends Field {
         generateDistanceField();
 
         this.scale.z = extrusionHeight*2;
+    }
+
+    private static Font loadCustomFont(String fontPath, int size) throws IOException {
+        try {
+            Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File(fontPath));
+            return customFont.deriveFont(Font.BOLD, size);
+        } catch (Exception e) {
+            throw new IOException("Failed to load font file: " + fontPath, e);
+        }
     }
     
     private void initializeTextOutline(String text, double fontSize, Font font, FontRenderContext frc) {

@@ -1,0 +1,24 @@
+import java.io.IOException;
+
+// used to import lower level classes (STL, Mesh, Triangle, Points)
+import printjava.*;
+// used to import higher level meshes (Rect, Sphere, Pyramid, etc)
+import printjava.Meshes.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        Text text = new Text("Hello World", 0.5, 0.1, 200, "font.ttf");
+        text.alignBottom();
+        text.alignLeft();
+
+        STL stl = new STL("text");
+        stl.add(text);
+
+        Rect rect = new Rect(0.5, 0.5, 0.1);
+        rect.anchor.y = -0.25;
+        rect.position.x = -0.25;
+        stl.add(rect);
+
+        stl.write();
+    }
+}
