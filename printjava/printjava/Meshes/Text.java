@@ -30,19 +30,23 @@ public class Text extends Field {
     private static double minX, minY, maxX, maxY;
     
     public Text(String text, double fontSize, double extrusionHeight) {
-        this(text, fontSize, extrusionHeight, 200);
+        this(text, 1, extrusionHeight, 200);
+        this.scale.set(fontSize, fontSize, extrusionHeight*2);
     }
 
     public Text(String text, double fontSize, double extrusionHeight, int resolution) {
-        this(text, fontSize, extrusionHeight, resolution, new Font("Monospace", Font.BOLD, (int)resolution));
+        this(text, 1, extrusionHeight, resolution, new Font("Plain", Font.BOLD, (int)resolution));
+        this.scale.set(fontSize, fontSize, extrusionHeight*2);
     }
 
     public Text(String text, double fontSize, double extrusionHeight, String fontPath) throws IOException {
-        this(text, fontSize, extrusionHeight, 200, loadCustomFont(fontPath, 200));
+        this(text, 1, extrusionHeight, 200, loadCustomFont(fontPath, 200));
+        this.scale.set(fontSize, fontSize, extrusionHeight*2);
     }
 
     public Text(String text, double fontSize, double extrusionHeight, int resolution, String fontPath) throws IOException {
-        this(text, fontSize, extrusionHeight, resolution, loadCustomFont(fontPath, resolution));
+        this(text, 1, extrusionHeight, resolution, loadCustomFont(fontPath, resolution));
+        this.scale.set(fontSize, fontSize, extrusionHeight*2);
     }
 
     private Text(String text, double fontSize, double extrusionHeight, int resolution, Font font) {
@@ -51,17 +55,19 @@ public class Text extends Field {
         this.font = font;
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
-        double w = this.font.getStringBounds(text, frc).getWidth() * fontSize / resolution;
-        super.width = w;
+        double w = this.font.getStringBounds(text, frc).getWidth() / 200.0;
+        double h = this.font.getStringBounds(text, frc).getHeight() / 200.0;
+        
+        super.width = w * fontSize;
+        super.height = h * fontSize;
         super.xDivisions = (int)(w * resolution);
-        double h = this.font.getStringBounds(text, frc).getHeight() * fontSize / resolution;
         super.yDivisions = (int)(h * resolution);
-        super.height = h;
         
         initializeTextOutline(text, fontSize, font, frc);
         generateDistanceField();
 
-        this.scale.z = extrusionHeight*2;
+        this.scale.x = fontSize;
+        this.scale.y = fontSize;
     }
 
     private static Font loadCustomFont(String fontPath, int size) throws IOException {
@@ -77,7 +83,7 @@ public class Text extends Field {
         textOutline = new Path2D.Double();
         double xOffset = 0.0;
         double characterSpacing = 0.1;
-        double scale = fontSize / resolution;
+        double scale = 1.0 / 200.0;
         
         for (char c : text.toCharArray()) {
             String charAsString = String.valueOf(c);
@@ -92,24 +98,23 @@ public class Text extends Field {
         }
         
         textOutline.transform(AffineTransform.getScaleInstance(scale, scale));
-        
         textOutline.transform(AffineTransform.getScaleInstance(1, -1));
         
         textBounds = textOutline.getBounds2D();
-        minX = textBounds.getMinX() - maxDistanceForInterpolation * fontSize;
-        minY = textBounds.getMinY() - maxDistanceForInterpolation * fontSize;
-        maxX = textBounds.getMaxX() + maxDistanceForInterpolation * fontSize;
-        maxY = textBounds.getMaxY() + maxDistanceForInterpolation * fontSize;
+        minX = textBounds.getMinX() - maxDistanceForInterpolation;
+        minY = textBounds.getMinY() - maxDistanceForInterpolation;
+        maxX = textBounds.getMaxX() + maxDistanceForInterpolation;
+        maxY = textBounds.getMaxY() + maxDistanceForInterpolation;
 
         double centerX = (textBounds.getMinX() + textBounds.getMaxX()) / 2;
         double centerY = (textBounds.getMinY() + textBounds.getMaxY()) / 2;
         textOutline.transform(AffineTransform.getTranslateInstance(-centerX, -centerY));
 
         textBounds = textOutline.getBounds2D();
-        minX = textBounds.getMinX() - maxDistanceForInterpolation * fontSize;
-        minY = textBounds.getMinY() - maxDistanceForInterpolation * fontSize;
-        maxX = textBounds.getMaxX() + maxDistanceForInterpolation * fontSize;
-        maxY = textBounds.getMaxY() + maxDistanceForInterpolation * fontSize;
+        minX = textBounds.getMinX() - maxDistanceForInterpolation;
+        minY = textBounds.getMinY() - maxDistanceForInterpolation;
+        maxX = textBounds.getMaxX() + maxDistanceForInterpolation;
+        maxY = textBounds.getMaxY() + maxDistanceForInterpolation;
     }
     
     private void generateDistanceField() {
@@ -165,11 +170,11 @@ public class Text extends Field {
     // alignment methods
 
     public void alignLeft() {
-        this.anchor.x = -this.width / 2;
+        this.anchor.x = -this.width*this.scale.x / 2;
     }
 
     public void alignRight() {
-        this.anchor.x = this.width / 2;
+        this.anchor.x = this.width*this.scale.x / 2;
     }
 
     public void alignCenter() {
@@ -177,11 +182,11 @@ public class Text extends Field {
     }
 
     public void alignTop() {
-        this.anchor.y = this.height / 2;
+        this.anchor.y = this.height*this.scale.y / 2;
     }
 
     public void alignBottom() {
-        this.anchor.y = -this.height / 2;
+        this.anchor.y = -this.height*this.scale.y / 2;
     }
 
     public void alignMiddle() {
