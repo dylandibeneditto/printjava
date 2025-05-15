@@ -74,18 +74,18 @@ public class STL {
     }
 
     /**
-     * adds an array of meshes and mesh subclasses to the list of meshes
+     * adds an arraylist of meshes and mesh subclasses to the list of meshes
      */
-    public void add(Mesh[] meshes) {
+    public void add(ArrayList<Mesh> meshes) {
         for (Mesh m : meshes) {
             this.meshes.add(m);
         }
     }
 
     /**
-     * adds and arraylist of meshes and mesh subclasses to the list of meshes
+     * adds a list of meshes and mesh subclasses from spread operator
      */
-    public void add(ArrayList<Mesh> meshes) {
+    public void add(Mesh ...meshes) {
         for (Mesh m : meshes) {
             this.meshes.add(m);
         }
@@ -263,6 +263,7 @@ public class STL {
             }
             if (this.verbose)
                 System.out.println("File saved as '" + filePath + "'");
+                System.out.println("Triangle Count: " + triangleCount);
 
         } catch (IOException e) {
             System.err.println("Error writing STL file: " + e.getMessage());
