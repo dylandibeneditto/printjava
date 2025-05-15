@@ -8,7 +8,7 @@ import printjava.Point;
 
 public class Field extends Mesh {
     public double width, height, depth;
-    int xDivisions, yDivisions, zDivisions;
+    public int xDivisions, yDivisions, zDivisions;
     Function<Point, Double> f;
 
     private class PointValue extends Point {
