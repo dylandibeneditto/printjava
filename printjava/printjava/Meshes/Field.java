@@ -7,7 +7,7 @@ import printjava.Triangle;
 import printjava.Point;
 
 public class Field extends Mesh {
-    double width, height, depth;
+    public double width, height, depth;
     int xDivisions, yDivisions, zDivisions;
     Function<Point, Double> f;
 
@@ -117,7 +117,8 @@ public class Field extends Mesh {
                     }
 
                     double progress = ((i * yDivisions * zDivisions) + (j * zDivisions) + k) / (double) ((xDivisions - 1) * (yDivisions - 1) * (zDivisions - 1));
-                    System.out.printf("\rRendering progress: %.2f%%", progress * 100);
+                    if(progress % 0.25 == 0)
+                        System.out.printf("\rRendering progress: %.2f%%", progress * 100);
                 }
             }
         }
