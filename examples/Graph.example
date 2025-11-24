@@ -18,7 +18,7 @@ public class Main {
      * given x and y, return the height of the graph at that point
      * will be normalized by the Graph object
      */
-    public static double f(double x, double y) {
-        return x * x + y * y;
+    public static double f(Point2 p) {
+        return p.x * p.x + p.y * p.y;
     }
 }
