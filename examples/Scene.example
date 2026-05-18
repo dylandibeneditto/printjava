@@ -6,7 +6,7 @@ import printjava.Meshes.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        // Will create a new STL file called "mode.stl"
+        // Will create a new STL file called "model.stl"
         STL f = new STL("model");
 
         // Measurements will be in cm unless you change to inches with

@@ -11,12 +11,19 @@ public class Field extends Mesh {
     public int xDivisions, yDivisions, zDivisions;
     Function<Point, Double> f;
 
-    private class PointValue extends Point {
-        public double value;
+    private static class PointValue {
+        public final double x, y, z;
+        public final double value;
 
         public PointValue(double x, double y, double z, double value) {
-            super(x, y, z);
+            this.x = x;
+            this.y = y;
+            this.z = z;
             this.value = value;
+        }
+
+        public Point toPoint() {
+            return new Point(x, y, z);
         }
     }
 
@@ -36,9 +43,9 @@ public class Field extends Mesh {
         this.width = width;
         this.height = height;
         this.depth = depth;
-        this.xDivisions = (int) width * 100;
-        this.yDivisions = (int) height * 100;
-        this.zDivisions = (int) depth * 100;
+        this.xDivisions = (int)(width * 100);
+        this.yDivisions = (int)(height * 100);
+        this.zDivisions = (int)(depth * 100);
         this.f = f;
     }
 
@@ -61,36 +68,51 @@ public class Field extends Mesh {
      * https://youtu.be/M3iI2l0ltbE?si=Xa66wd-XEU3Fn80s
      */
     public void generate() {
+        double dx = width / xDivisions;
+        double dy = height / yDivisions;
+        double dz = depth / zDivisions;
+        double isolevel = 0.1;
+        double[][][] field = new double[xDivisions][yDivisions][zDivisions];
+        for (int i = 0; i < xDivisions; i++) {
+            for (int j = 0; j < yDivisions; j++) {
+                for (int k = 0; k < zDivisions; k++) {
+                    double x = i * dx - (width / 2);
+                    double y = j * dy - (height / 2);
+                    double z = k * dz - (depth / 2);
+                    field[i][j][k] = f.apply(new Point(x, y, z));
+                }
+            }
+        }
         // loop through each cube in the field
         for(int i = 0; i < xDivisions - 1; i++) {
             for(int j = 0; j < yDivisions - 1; j++) {
                 for(int k = 0; k < zDivisions - 1; k++) {
                     // will store each vertex of the cube
                     PointValue[] cubeCorners = new PointValue[8];
-                    double dx = width / xDivisions;
-                    double dy = height / yDivisions;
-                    double dz = depth / zDivisions;
-                    
                     // logic to calculate the vertices of the cube
                     for (int n = 0; n < 8; n++) {
                         int xOffset = (n & 1);
                         int yOffset = (n & 2) >> 1;
                         int zOffset = (n & 4) >> 2;
-                    
+
                         double x1 = (i + xOffset) * dx - (width / 2);
                         double y1 = (j + yOffset) * dy - (height / 2);
                         double z1 = (k + zOffset) * dz - (depth / 2);
-                    
-                        cubeCorners[n] = new PointValue(x1, y1, z1, f.apply(new Point(x1, y1, z1)));
+
+                        cubeCorners[n] = new PointValue(
+                            x1,
+                            y1,
+                            z1,
+                            field[i + xOffset][j + yOffset][k + zOffset]
+                        );
                     }
 
                     // calculate the cube's index
-                    double isolevel = 0.1;
                     int cubeIndex = 0;
                     for (int n = 0; n < 8; n++) {
-                        if (cubeCorners[n].value >= isolevel) cubeIndex |= 1 << n;
+                        if (cubeCorners[n].value < isolevel) cubeIndex |= 1 << n;
                     }
-                    
+
                     if (EDGE_TABLE[cubeIndex] == 0) continue;
 
                     // will store the vertices of the triangles, which are at most 4 triangles (12 vertices)
@@ -105,21 +127,18 @@ public class Field extends Mesh {
                     }
 
                     for (int t = 0; TRIANGLE_TABLE[cubeIndex][t] != -1; t += 3) {
-                        int index1 = TRIANGLE_TABLE[cubeIndex][t];
-                        if (index1 == -1 || vertlist[index1] == null) continue;
-                        Point p1 = vertlist[TRIANGLE_TABLE[cubeIndex][t + 2]];
+                        Point p1 = vertlist[TRIANGLE_TABLE[cubeIndex][t]];
                         Point p2 = vertlist[TRIANGLE_TABLE[cubeIndex][t + 1]];
-                        Point p3 = vertlist[index1];
-
+                        Point p3 = vertlist[TRIANGLE_TABLE[cubeIndex][t + 2]];
                         if (p1 != null && p2 != null && p3 != null) {
-                            add(new Triangle(p1, p2, p3));
+                            add(new Triangle(p3, p2, p1));
                         }
                     }
-
-                    double progress = ((i * yDivisions * zDivisions) + (j * zDivisions) + k) / (double) ((xDivisions - 1) * (yDivisions - 1) * (zDivisions - 1));
-                    if(progress % 0.25 == 0)
-                        System.out.printf("\rRendering progress: %.2f%%", progress * 100);
                 }
+            }
+            if (i % 10 == 0) {
+                double progress = i / (double)(xDivisions - 1);
+                System.out.printf("\rRendering progress: %.2f%%", progress * 100);
             }
         }
     }
@@ -128,9 +147,12 @@ public class Field extends Mesh {
      * Math for finding the middle point between two points.
      */
     private Point interpolate(double isolevel, PointValue p1, PointValue p2) {
-        if (Math.abs(isolevel - p1.value) < 0.00001) return p1;
-        if (Math.abs(isolevel - p2.value) < 0.00001) return p2;
-        if (Math.abs(p1.value - p2.value) < 0.00001) return p1;
+        if (Math.abs(isolevel - p1.value) < 0.00001)
+            return new Point(p1.x, p1.y, p1.z);
+        if (Math.abs(isolevel - p2.value) < 0.00001)
+            return new Point(p2.x, p2.y, p2.z);
+        if (Math.abs(p1.value - p2.value) < 0.00001)
+            return new Point(p1.x, p1.y, p1.z);
 
         double mu = (isolevel - p1.value) / (p2.value - p1.value);
         return new Point(

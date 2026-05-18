@@ -19,6 +19,7 @@ public class Graph extends Mesh {
     // whether or not to have a base, and how tall the base is
     private boolean base = true;
     private double baseHeight = 0.1;
+    private double thickness = 0.1;
 
     // new Graph(Main::f);
     public Graph(Function<Point2, Double> f) {
@@ -151,6 +152,8 @@ public class Graph extends Mesh {
                         + ((points[i + 1][j + 1] - bottom) / range) * (this.depth - this.baseHeight);
                 double h01 = this.baseHeight + ((points[i][j + 1] - bottom) / range) * (this.depth - this.baseHeight);
 
+                
+
                 // add walls
                 if (this.base && (i == 0 || i == this.xDivisions - 1 || j == 0 || j == this.yDivisions - 1)) {
                     if (i == 0) {
@@ -169,16 +172,42 @@ public class Graph extends Mesh {
                         add(new Quad(new Point(x0, 0, y1), new Point(x1, 0, y1), new Point(x1, h11, y1),
                                 new Point(x0, h01, y1)));
                     }
+                } else {
+                    if (i == 0) {
+                        add(new Quad(new Point(x0, h01, y1), new Point(x0, h00, y0), new Point(x0, h00-this.thickness, y0),
+                                new Point(x0, h01-this.thickness, y0)));
+                    }
+                    if (i == this.xDivisions - 1) {
+                        add(new Quad(new Point(x1, h10, y0), new Point(x1, h11, y1), new Point(x1, h10-this.thickness, y1),
+                                new Point(x1, h11-this.thickness, y0)));
+                    }
+                    if (j == 0) {
+                        add(new Quad(new Point(x0, h00, y0), new Point(x1, h10, y0), new Point(x1, h00-this.thickness, y0),
+                                new Point(x0, h10-this.thickness, y0)));
+                    }
+                    if (j == this.yDivisions - 1) {
+                        add(new Quad(new Point(x0, h11-this.thickness, y1), new Point(x1, h01-this.thickness, y1), new Point(x1, h11, y1),
+                                new Point(x0, h01, y1)));
+                    }
                 }
 
                 // add surface quad
                 add(new Quad(new Point(x0, h01, y1), new Point(x1, h11, y1), new Point(x1, h10, y0),
                         new Point(x0, h00, y0)));
+
+                // add backface if no walls
+                if (!this.base) {
+                    add(new Quad(new Point(x0, h00-this.thickness, y0), new Point(x1, h10-this.thickness, y0), new Point(x1, h11-this.thickness, y1),
+                            new Point(x0, h01-this.thickness, y1)));
+                }
             }
         }
 
         // bottom face
-        add(new Quad(new Point(-this.width / 2, 0, -this.height / 2), new Point(this.width / 2, 0, -this.height / 2),
-                new Point(this.width / 2, 0, this.height / 2), new Point(-this.width / 2, 0, this.height / 2)));
+        if (this.base) {
+            add(new Quad(new Point(-this.width / 2, 0, -this.height / 2),
+                    new Point(this.width / 2, 0, -this.height / 2),
+                    new Point(this.width / 2, 0, this.height / 2), new Point(-this.width / 2, 0, this.height / 2)));
+        }
     }
 }
