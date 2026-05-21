@@ -2,19 +2,38 @@ package printjava;
 
 public class Point {
 	public double x, y, z;
+
 	// new Point(0, 0, 0);
+	/**
+	 * Constructs a new Point.
+	 * 
+	 * @param x the x value.
+	 * @param y the y value.
+	 * @param z the z value.
+	 */
 	public Point(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
 
+	/**
+	 * Constructs a new Point.
+	 * 
+	 * @param p the p value.
+	 */
 	public Point(Point2 p) {
 		this.x = p.x;
 		this.y = 0;
 		this.z = p.y;
 	}
 
+	/**
+	 * Constructs a new Point.
+	 * 
+	 * @param p the p value.
+	 * @param y the y value.
+	 */
 	public Point(Point2 p, double y) {
 		this.x = p.x;
 		this.y = y;
@@ -30,6 +49,12 @@ public class Point {
 		this.z = z;
 	}
 
+	/**
+	 * Distances the specified value.
+	 * 
+	 * @param p the p value.
+	 * @return the double result.
+	 */
 	public double distance(Point p) {
 		double dx = x - p.x;
 		double dy = y - p.y;
@@ -37,26 +62,62 @@ public class Point {
 		return Math.sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
+	/**
+	 * Adds the specified value.
+	 * 
+	 * @param p the p value.
+	 * @return the Point result.
+	 */
 	public Point add(Point p) {
 		return new Point(this.x + p.x, this.y + p.y, this.z + p.z);
 	}
 
+	/**
+	 * Subtracts the specified value.
+	 * 
+	 * @param p the p value.
+	 * @return the Point result.
+	 */
 	public Point subtract(Point p) {
 		return new Point(this.x - p.x, this.y - p.y, this.z - p.z);
 	}
 
+	/**
+	 * Multiplys the specified value.
+	 * 
+	 * @param p the p value.
+	 * @return the Point result.
+	 */
 	public Point multiply(Point p) {
 		return new Point(this.x * p.x, this.y * p.y, this.z * p.z);
 	}
 
+	/**
+	 * Multiplys the specified value.
+	 * 
+	 * @param factor the factor value.
+	 * @return the Point result.
+	 */
 	public Point multiply(double factor) {
 		return new Point(this.x * factor, this.y * factor, this.z * factor);
 	}
 
+	/**
+	 * Divides the specified value.
+	 * 
+	 * @param p the p value.
+	 * @return the Point result.
+	 */
 	public Point divide(Point p) {
 		return new Point(this.x / p.x, this.y / p.y, this.z / p.z);
 	}
 
+	/**
+	 * Divides the specified value.
+	 * 
+	 * @param factor the factor value.
+	 * @return the Point result.
+	 */
 	public Point divide(double factor) {
 		return new Point(this.x / factor, this.y / factor, this.z / factor);
 	}
@@ -83,7 +144,8 @@ public class Point {
 	 */
 	public Point normalize() {
 		double mag = this.magnitude();
-		if (mag == 0) return new Point(0, 0, 0);
+		if (mag == 0)
+			return new Point(0, 0, 0);
 		return new Point(this.x / mag, this.y / mag, this.z / mag);
 	}
 
@@ -97,60 +159,65 @@ public class Point {
 	/**
 	 * will rotate the point around the X AXIS
 	 * in radians!
+	 * 
 	 * @returns the rotated point, DOESNT CHANGE THIS POINT
 	 */
-    public Point rotateAroundX(double angleRadians, Point center) {
-        double dy = this.y - center.y;
-        double dz = this.z - center.z;
+	public Point rotateAroundX(double angleRadians, Point center) {
+		double dy = this.y - center.y;
+		double dz = this.z - center.z;
 
-        double cosA = Math.cos(angleRadians);
-        double sinA = Math.sin(angleRadians);
+		double cosA = Math.cos(angleRadians);
+		double sinA = Math.sin(angleRadians);
 
-        double newY = dy * cosA - dz * sinA;
-        double newZ = dy * sinA + dz * cosA;
+		double newY = dy * cosA - dz * sinA;
+		double newZ = dy * sinA + dz * cosA;
 
-        return new Point(this.x, newY + center.y, newZ + center.z);
-    }
+		return new Point(this.x, newY + center.y, newZ + center.z);
+	}
 
 	/**
 	 * will rotate the point around the Y AXIS
 	 * in radians!
+	 * 
 	 * @returns the rotated point, DOESNT CHANGE THIS POINT
 	 */
-    public Point rotateAroundY(double angleRadians, Point center) {
-        double dx = this.x - center.x;
-        double dz = this.z - center.z;
+	public Point rotateAroundY(double angleRadians, Point center) {
+		double dx = this.x - center.x;
+		double dz = this.z - center.z;
 
-        double cosA = Math.cos(angleRadians);
-        double sinA = Math.sin(angleRadians);
+		double cosA = Math.cos(angleRadians);
+		double sinA = Math.sin(angleRadians);
 
-        double newX = dx * cosA + dz * sinA;
-        double newZ = -dx * sinA + dz * cosA;
+		double newX = dx * cosA + dz * sinA;
+		double newZ = -dx * sinA + dz * cosA;
 
-        return new Point(newX + center.x, this.y, newZ + center.z);
-    }
+		return new Point(newX + center.x, this.y, newZ + center.z);
+	}
 
 	/**
 	 * will rotate the point around the Z AXIS
 	 * in radians!
+	 * 
 	 * @returns the rotated point, DOESNT CHANGE THIS POINT
 	 */
-    public Point rotateAroundZ(double angleRadians, Point center) {
-        double dx = this.x - center.x;
-        double dy = this.y - center.y;
+	public Point rotateAroundZ(double angleRadians, Point center) {
+		double dx = this.x - center.x;
+		double dy = this.y - center.y;
 
-        double cosA = Math.cos(angleRadians);
-        double sinA = Math.sin(angleRadians);
+		double cosA = Math.cos(angleRadians);
+		double sinA = Math.sin(angleRadians);
 
-        double newX = dx * cosA - dy * sinA;
-        double newY = dx * sinA + dy * cosA;
+		double newX = dx * cosA - dy * sinA;
+		double newY = dx * sinA + dy * cosA;
 
-        return new Point(newX + center.x, newY + center.y, this.z);
-    }
+		return new Point(newX + center.x, newY + center.y, this.z);
+	}
 
 	/**
 	 * will rotate the point around the X, Y, and Z AXIS
-	 * @param anglesRadians the angles in radians to rotate around the x, y, and z axes
+	 * 
+	 * @param anglesRadians the angles in radians to rotate around the x, y, and z
+	 *                      axes
 	 * @returns the rotated point, DOESNT CHANGE THIS POINT
 	 */
 	public Point rotate(Point anglesRadians, Point center) {
@@ -160,11 +227,22 @@ public class Point {
 				.rotateAroundZ(anglesRadians.z, center);
 	}
 
+	/**
+	 * Equals the specified values.
+	 * 
+	 * @param p the p value.
+	 * @return the boolean result.
+	 */
 	public boolean equals(Point p) {
 		return this.x == p.x && this.y == p.y && this.z == p.z;
 	}
 
 	@Override
+	/**
+	 * ToStrings the specified value.
+	 * 
+	 * @return the String result.
+	 */
 	public String toString() {
 		return "(" + this.x + ", " + this.y + ", " + this.z + ")";
 	}

@@ -8,27 +8,41 @@ public class Plane extends Mesh {
     private double width, height;
 
     // new Plane();
+    /**
+     * Constructs a new Plane.
+     */
     public Plane() {
         super();
         this.width = 1;
         this.height = 1;
-        
+
     }
 
     // new Plane(1);
+    /**
+     * Constructs a new Plane.
+     * 
+     * @param size the size value.
+     */
     public Plane(double size) {
         super();
         this.width = size;
         this.height = size;
-        
+
     }
 
     // new Plane(1, 1);
+    /**
+     * Constructs a new Plane.
+     * 
+     * @param width  the width value.
+     * @param height the height value.
+     */
     public Plane(double width, double height) {
         super();
         this.width = width;
         this.height = height;
-        
+
     }
 
     /**
@@ -38,8 +52,10 @@ public class Plane extends Mesh {
         double halfWidth = this.width / 2;
         double halfHeight = this.height / 2;
 
-        add(new Triangle(new Point(halfWidth, 0, halfHeight), new Point(halfWidth, 0, -halfHeight),  new Point(-halfWidth, 0, -halfHeight)));
+        add(new Triangle(new Point(halfWidth, 0, halfHeight), new Point(halfWidth, 0, -halfHeight),
+                new Point(-halfWidth, 0, -halfHeight)));
 
-        add(new Triangle(new Point(-halfWidth, 0, halfHeight), new Point(halfWidth, 0, halfHeight),  new Point(-halfWidth, 0, -halfHeight)));
+        add(new Triangle(new Point(-halfWidth, 0, halfHeight), new Point(halfWidth, 0, halfHeight),
+                new Point(-halfWidth, 0, -halfHeight)));
     }
 }

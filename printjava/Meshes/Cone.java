@@ -11,34 +11,56 @@ public class Cone extends Mesh {
     private int resolution = 30;
 
     // new Cone();
+    /**
+     * Constructs a new Cone.
+     */
     public Cone() {
         super();
         this.radius = 1;
         this.height = 1;
-        
+
     }
 
     // new Cone(1, 1);
+    /**
+     * Constructs a new Cone.
+     * 
+     * @param radius the radius value.
+     * @param height the height value.
+     */
     public Cone(double radius, double height) {
         super();
         this.radius = radius;
         this.height = height;
-        
+
     }
 
     /// new Cone(1, 1, 30);
+    /**
+     * Constructs a new Cone.
+     * 
+     * @param radius     the radius value.
+     * @param height     the height value.
+     * @param resolution the resolution value.
+     */
     public Cone(double radius, double height, int resolution) {
         super();
         this.radius = radius;
         this.height = height;
         this.resolution = resolution;
-        
+
     }
 
+    /**
+     * SnapToGrounds the specified value.
+     */
     public void snapToGround() {
         this.anchor.y = 0;
     }
 
+    /**
+     * SnapToCenters the specified value.
+     */
     public void snapToCenter() {
         this.anchor.y = this.height / 2;
     }
@@ -50,7 +72,7 @@ public class Cone extends Mesh {
         Point topCenter = new Point(0, this.height, 0);
         Point bottomCenter = new Point(0, 0, 0);
 
-        for(int i = 0; i < this.resolution; i++) {
+        for (int i = 0; i < this.resolution; i++) {
             double theta0 = i * 2 * Math.PI / this.resolution;
             double theta1 = (i + 1) * 2 * Math.PI / this.resolution;
 

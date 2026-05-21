@@ -26,6 +26,20 @@ public class Graph extends Mesh {
     private double thickness = 0.1;
 
     // new Graph(Main::f);
+    /**
+     * Constructs a Graph mesh from a function that takes a Point2 and returns a
+     * double.
+     * 
+     * @param f The function that defines the graph. It should take a Point2 and
+     *          return a double representing the height at that point. The x and y
+     *          coordinates of the Point2 will be determined by the startX, startY,
+     *          endX, and endY parameters, and the width and height of the graph
+     *          will be determined by the width and height parameters. The depth of
+     *          the graph will be determined by the depth parameter. The number of
+     *          divisions in the x and y directions will be determined by the
+     *          xDivisions and yDivisions parameters. The base of the graph will be
+     *          determined by the base and baseHeight parameters.
+     */
     public Graph(Function<Point2, Double> f) {
         super();
         this.startX = -10;
@@ -41,6 +55,24 @@ public class Graph extends Mesh {
     }
 
     // new Graph(Main::f, -10, -10, 10, 10);
+    /**
+     * Constructs a Graph mesh from a function and bounds.
+     * 
+     * @param f      The function that defines the graph. It should take a Point2
+     *               and return a double representing the height at that point. The
+     *               x and y coordinates of the Point2 will be determined by the
+     *               startX, startY, endX, and endY parameters, and the width and
+     *               height of the graph will be determined by the width and height
+     *               parameters. The depth of the graph will be determined by the
+     *               depth parameter. The number of divisions in the x and y
+     *               directions will be determined by the xDivisions and yDivisions
+     *               parameters. The base of the graph will be determined by the
+     *               base and baseHeight parameters.
+     * @param startX the starting x-coordinate of the graph
+     * @param startY the starting y-coordinate of the graph
+     * @param endX   the ending x-coordinate of the graph
+     * @param endY   the ending y-coordinate of the graph
+     */
     public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY) {
         super();
         this.startX = startX;
@@ -56,6 +88,27 @@ public class Graph extends Mesh {
     }
 
     // new Graph(Main::f, -10, -10, 10, 10, 1, 1, 1);
+    /**
+     * Constructs a Graph mesh from a function, bounds, and dimensions.
+     * 
+     * @param f      The function that defines the graph. It should take a Point2
+     *               and return a double representing the height at that point. The
+     *               x and y coordinates of the Point2 will be determined by the
+     *               startX, startY, endX, and endY parameters, and the width and
+     *               height of the graph will be determined by the width and height
+     *               parameters. The depth of the graph will be determined by the
+     *               depth parameter. The number of divisions in the x and y
+     *               directions will be determined by the xDivisions and yDivisions
+     *               parameters. The base of the graph will be determined by the
+     *               base and baseHeight parameters.
+     * @param startX the starting x-coordinate of the graph
+     * @param startY the starting y-coordinate of the graph
+     * @param endX   the ending x-coordinate of the graph
+     * @param endY   the ending y-coordinate of the graph
+     * @param width  the width of the graph in the x-axis
+     * @param height the height of the graph in the y-axis
+     * @param depth  the depth of the graph in the z-axis
+     */
     public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY, double width,
             double height, double depth) {
         super();
@@ -72,6 +125,34 @@ public class Graph extends Mesh {
     }
 
     // new Graph(Main::f, -10, -10, 10, 10, 1, 1, 1, 100, 100);
+    /**
+     * Constructs a Graph mesh from a function, bounds, dimensions, and divisions.
+     * 
+     * @param f          The function that defines the graph. It should take a
+     *                   Point2 and return a double representing the height at that
+     *                   point. The x and y coordinates of the Point2 will be
+     *                   determined by the startX, startY, endX, and endY
+     *                   parameters, and the width and height of the graph will be
+     *                   determined by the width and height parameters. The depth of
+     *                   the graph will be determined by the depth parameter. The
+     *                   number of divisions in the x and y directions will be
+     *                   determined by the xDivisions and yDivisions parameters. The
+     *                   base of the graph will be determined by the base and
+     *                   baseHeight parameters.
+     * @param startX     the starting x-coordinate of the graph
+     * @param startY     the starting y-coordinate of the graph
+     * @param endX       the ending x-coordinate of the graph
+     * @param endY       the ending y-coordinate of the graph
+     * @param width      the width of the graph in the x-axis
+     * @param height     the height of the graph in the y-axis
+     * @param depth      the depth of the graph in the z-axis
+     * @param xDivisions the number of divisions in the x-axis. This determines the
+     *                   resolution of the mesh. Higher values will result in a more
+     *                   detailed mesh but will take longer to generate.
+     * @param yDivisions the number of divisions in the y-axis. This determines the
+     *                   resolution of the mesh. Higher values will result in a more
+     *                   detailed mesh but will take longer to generate.
+     */
     public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY, double width,
             double height, double depth, int xDivisions, int yDivisions) {
         super();
@@ -88,6 +169,42 @@ public class Graph extends Mesh {
     }
 
     // new Graph(Main::f, -10, -10, 10, 10, 1, 1, 1, 100, 100, true, 0.1);
+    /**
+     * Constructs a Graph mesh from a function, bounds, dimensions, divisions, and
+     * base settings.
+     * 
+     * @param f          The function that defines the graph. It should take a
+     *                   Point2 and return a double representing the height at that
+     *                   point. The x and y coordinates of the Point2 will be
+     *                   determined by the startX, startY, endX, and endY
+     *                   parameters, and the width and height of the graph will be
+     *                   determined by the width and height parameters. The depth of
+     *                   the graph will be determined by the depth parameter. The
+     *                   number of divisions in the x and y directions will be
+     *                   determined by the xDivisions and yDivisions parameters. The
+     *                   base of the graph will be determined by the base and
+     *                   baseHeight parameters.
+     * @param startX     the starting x-coordinate of the graph
+     * @param startY     the starting y-coordinate of the graph
+     * @param endX       the ending x-coordinate of the graph
+     * @param endY       the ending y-coordinate of the graph
+     * @param width      the width of the graph in the x-axis
+     * @param height     the height of the graph in the y-axis
+     * @param depth      the depth of the graph in the z-axis
+     * @param xDivisions the number of divisions in the x-axis. This determines the
+     *                   resolution of the mesh. Higher values will result in a more
+     *                   detailed mesh but will take longer to generate.
+     * @param yDivisions the number of divisions in the y-axis. This determines the
+     *                   resolution of the mesh. Higher values will result in a more
+     *                   detailed mesh but will take longer to generate.
+     * @param base       whether or not to include a base for the graph. If true,
+     *                   the graph will have a flat base at the height specified by
+     *                   baseHeight. If false, the graph will not have a base and
+     *                   will only consist of the surface defined by the function.
+     * @param baseHeight the height of the base if base is true. This determines how
+     *                   tall the base of the graph will be. If base is false, this
+     *                   parameter is ignored.
+     */
     public Graph(Function<Point2, Double> f, double startX, double startY, double endX, double endY, double width,
             double height, double depth, int xDivisions, int yDivisions, boolean base, double baseHeight) {
         super();
@@ -130,11 +247,22 @@ public class Graph extends Mesh {
         this.yDivisions = clampDivisions(this.yDivisions);
     }
 
+    /**
+     * Generates the triangles for the graph mesh by evaluating the function at each
+     * subdivision point and creating triangles for each quad formed by adjacent
+     * points. The generated triangles are added to the mesh using the add method.
+     */
     public void generate() {
         this.triangles.clear();
         generateTriangles(this::add);
     }
 
+    /**
+     * Generates the triangles for the graph mesh by evaluating the function at each
+     * subdivision point and creating triangles for each quad formed by adjacent
+     * points. The generated triangles are passed to a consumer function, which can
+     * be used to add them to the mesh or perform other operations on them.
+     */
     public void generateTriangles(java.util.function.Consumer<Triangle> consumer) {
         normalizeDivisions();
         double dx = (this.endX - this.startX) / this.xDivisions;
@@ -186,37 +314,53 @@ public class Graph extends Mesh {
                 // add walls
                 if (this.base && (i == 0 || i == this.xDivisions - 1 || j == 0 || j == this.yDivisions - 1)) {
                     if (i == 0) {
-                        consumer.accept(new Triangle(new Point(x0, h01, y1), new Point(x0, h00, y0), new Point(x0, 0, y0)));
-                        consumer.accept(new Triangle(new Point(x0, h01, y1), new Point(x0, 0, y0), new Point(x0, 0, y1)));
+                        consumer.accept(
+                                new Triangle(new Point(x0, h01, y1), new Point(x0, h00, y0), new Point(x0, 0, y0)));
+                        consumer.accept(
+                                new Triangle(new Point(x0, h01, y1), new Point(x0, 0, y0), new Point(x0, 0, y1)));
                     }
                     if (i == this.xDivisions - 1) {
-                        consumer.accept(new Triangle(new Point(x1, h10, y0), new Point(x1, h11, y1), new Point(x1, 0, y1)));
-                        consumer.accept(new Triangle(new Point(x1, h10, y0), new Point(x1, 0, y1), new Point(x1, 0, y0)));
+                        consumer.accept(
+                                new Triangle(new Point(x1, h10, y0), new Point(x1, h11, y1), new Point(x1, 0, y1)));
+                        consumer.accept(
+                                new Triangle(new Point(x1, h10, y0), new Point(x1, 0, y1), new Point(x1, 0, y0)));
                     }
                     if (j == 0) {
-                        consumer.accept(new Triangle(new Point(x0, h00, y0), new Point(x1, h10, y0), new Point(x1, 0, y0)));
-                        consumer.accept(new Triangle(new Point(x0, h00, y0), new Point(x1, 0, y0), new Point(x0, 0, y0)));
+                        consumer.accept(
+                                new Triangle(new Point(x0, h00, y0), new Point(x1, h10, y0), new Point(x1, 0, y0)));
+                        consumer.accept(
+                                new Triangle(new Point(x0, h00, y0), new Point(x1, 0, y0), new Point(x0, 0, y0)));
                     }
                     if (j == this.yDivisions - 1) {
-                        consumer.accept(new Triangle(new Point(x0, 0, y1), new Point(x1, 0, y1), new Point(x1, h11, y1)));
-                        consumer.accept(new Triangle(new Point(x0, 0, y1), new Point(x1, h11, y1), new Point(x0, h01, y1)));
+                        consumer.accept(
+                                new Triangle(new Point(x0, 0, y1), new Point(x1, 0, y1), new Point(x1, h11, y1)));
+                        consumer.accept(
+                                new Triangle(new Point(x0, 0, y1), new Point(x1, h11, y1), new Point(x0, h01, y1)));
                     }
                 } else {
                     if (i == 0) {
-                        consumer.accept(new Triangle(new Point(x0, h01, y1), new Point(x0, h00, y0), new Point(x0, h00-this.thickness, y0)));
-                        consumer.accept(new Triangle(new Point(x0, h01, y1), new Point(x0, h00-this.thickness, y0), new Point(x0, h01-this.thickness, y0)));
+                        consumer.accept(new Triangle(new Point(x0, h01, y1), new Point(x0, h00, y0),
+                                new Point(x0, h00 - this.thickness, y0)));
+                        consumer.accept(new Triangle(new Point(x0, h01, y1), new Point(x0, h00 - this.thickness, y0),
+                                new Point(x0, h01 - this.thickness, y0)));
                     }
                     if (i == this.xDivisions - 1) {
-                        consumer.accept(new Triangle(new Point(x1, h10, y0), new Point(x1, h11, y1), new Point(x1, h10-this.thickness, y1)));
-                        consumer.accept(new Triangle(new Point(x1, h10-this.thickness, y1), new Point(x1, h11, y1), new Point(x1, h11-this.thickness, y0)));
+                        consumer.accept(new Triangle(new Point(x1, h10, y0), new Point(x1, h11, y1),
+                                new Point(x1, h10 - this.thickness, y1)));
+                        consumer.accept(new Triangle(new Point(x1, h10 - this.thickness, y1), new Point(x1, h11, y1),
+                                new Point(x1, h11 - this.thickness, y0)));
                     }
                     if (j == 0) {
-                        consumer.accept(new Triangle(new Point(x0, h00, y0), new Point(x1, h10, y0), new Point(x1, h00-this.thickness, y0)));
-                        consumer.accept(new Triangle(new Point(x0, h00, y0), new Point(x1, h00-this.thickness, y0), new Point(x0, h10-this.thickness, y0)));
+                        consumer.accept(new Triangle(new Point(x0, h00, y0), new Point(x1, h10, y0),
+                                new Point(x1, h00 - this.thickness, y0)));
+                        consumer.accept(new Triangle(new Point(x0, h00, y0), new Point(x1, h00 - this.thickness, y0),
+                                new Point(x0, h10 - this.thickness, y0)));
                     }
                     if (j == this.yDivisions - 1) {
-                        consumer.accept(new Triangle(new Point(x0, h11-this.thickness, y1), new Point(x1, h01-this.thickness, y1), new Point(x1, h11, y1)));
-                        consumer.accept(new Triangle(new Point(x0, h11-this.thickness, y1), new Point(x1, h11, y1), new Point(x0, h01, y1)));
+                        consumer.accept(new Triangle(new Point(x0, h11 - this.thickness, y1),
+                                new Point(x1, h01 - this.thickness, y1), new Point(x1, h11, y1)));
+                        consumer.accept(new Triangle(new Point(x0, h11 - this.thickness, y1), new Point(x1, h11, y1),
+                                new Point(x0, h01, y1)));
                     }
                 }
 
@@ -226,8 +370,10 @@ public class Graph extends Mesh {
 
                 // add backface if no walls
                 if (!this.base) {
-                    consumer.accept(new Triangle(new Point(x0, h00-this.thickness, y0), new Point(x1, h10-this.thickness, y0), new Point(x1, h11-this.thickness, y1)));
-                    consumer.accept(new Triangle(new Point(x0, h00-this.thickness, y0), new Point(x1, h11-this.thickness, y1), new Point(x0, h01-this.thickness, y1)));
+                    consumer.accept(new Triangle(new Point(x0, h00 - this.thickness, y0),
+                            new Point(x1, h10 - this.thickness, y0), new Point(x1, h11 - this.thickness, y1)));
+                    consumer.accept(new Triangle(new Point(x0, h00 - this.thickness, y0),
+                            new Point(x1, h11 - this.thickness, y1), new Point(x0, h01 - this.thickness, y1)));
                 }
             }
         }

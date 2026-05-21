@@ -12,34 +12,56 @@ public class Cylinder extends Mesh {
     private int resolution = 30;
 
     // new Cylinder();
+    /**
+     * Constructs a new Cylinder.
+     */
     public Cylinder() {
         super();
         this.radius = 1;
         this.height = 1;
-        
+
     }
 
     // new Cylinder(1, 1);
+    /**
+     * Constructs a new Cylinder.
+     * 
+     * @param radius the radius value.
+     * @param height the height value.
+     */
     public Cylinder(double radius, double height) {
         super();
         this.radius = radius;
         this.height = height;
-        
+
     }
 
     // new Cylinder(1, 1, 30);
+    /**
+     * Constructs a new Cylinder.
+     * 
+     * @param radius     the radius value.
+     * @param height     the height value.
+     * @param resolution the resolution value.
+     */
     public Cylinder(double radius, double height, int resolution) {
         super();
         this.radius = radius;
         this.height = height;
         this.resolution = resolution;
-        
+
     }
 
+    /**
+     * SnapToGrounds the specified value.
+     */
     public void snapToGround() {
         this.anchor.y = -this.height / 2;
     }
 
+    /**
+     * SnapToCenters the specified value.
+     */
     public void snapToCenter() {
         this.anchor.y = 0;
     }
@@ -48,7 +70,6 @@ public class Cylinder extends Mesh {
      * generates all the triangles that make up a cylinder
      */
     public void generate() {
-        
 
         ArrayList<Point> topPoints = new ArrayList<Point>();
         ArrayList<Point> bottomPoints = new ArrayList<Point>();
@@ -56,7 +77,7 @@ public class Cylinder extends Mesh {
         Point topCenter = new Point(0, this.height / 2, 0);
         Point bottomCenter = new Point(0, -this.height / 2, 0);
 
-        for(int i = 0; i < this.resolution; i++) {
+        for (int i = 0; i < this.resolution; i++) {
             double theta = i * 2 * Math.PI / this.resolution;
             double x = this.radius * Math.cos(theta);
             double z = this.radius * Math.sin(theta);
@@ -65,7 +86,7 @@ public class Cylinder extends Mesh {
             bottomPoints.add(new Point(x, -this.height / 2, z));
         }
 
-        for(int i = 0; i < this.resolution; i++) {
+        for (int i = 0; i < this.resolution; i++) {
             Point top0 = topPoints.get(i);
             Point top1 = topPoints.get((i + 1) % this.resolution);
             Point bottom0 = bottomPoints.get(i);

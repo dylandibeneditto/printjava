@@ -22,18 +22,34 @@ public class STL {
     public double depth = 26.5;
 
     // new STL();
+    /**
+     * Constructs a new STL.
+     */
     public STL() {
         this.name = "model";
         this.meshes = new ArrayList<>();
     }
 
     // new STL("name");
+    /**
+     * Constructs a new STL.
+     * 
+     * @param name the name value.
+     */
     public STL(String name) {
         this.name = name;
         this.meshes = new ArrayList<>();
     }
 
     // new STL("name", 10, 10, 10);
+    /**
+     * Constructs a new STL.
+     * 
+     * @param name   the name value.
+     * @param width  the width value.
+     * @param height the height value.
+     * @param depth  the depth value.
+     */
     public STL(String name, double width, double height, double depth) {
         this.name = name;
         this.meshes = new ArrayList<>();
@@ -61,6 +77,11 @@ public class STL {
         this.metric = metric;
     }
 
+    /**
+     * Checks whether metric is true.
+     * 
+     * @return the boolean result.
+     */
     public boolean isMetric() {
         return this.metric;
     }
@@ -84,7 +105,7 @@ public class STL {
     /**
      * adds a list of meshes and mesh subclasses from spread operator
      */
-    public void add(Mesh ...meshes) {
+    public void add(Mesh... meshes) {
         for (Mesh m : meshes) {
             this.meshes.add(m);
         }
@@ -110,7 +131,8 @@ public class STL {
                 Mesh m = this.meshes.get(i);
 
                 if (this.verbose)
-                    System.out.println("\t[" + (i+1) + "/" + this.meshes.size() + "] Generating " + m.getClass().getSimpleName() + "...");
+                    System.out.println("\t[" + (i + 1) + "/" + this.meshes.size() + "] Generating "
+                            + m.getClass().getSimpleName() + "...");
 
                 writer.write(String.format("solid %s\r\n", i));
 
@@ -216,7 +238,8 @@ public class STL {
             for (int i = 0; i < this.meshes.size(); i++) {
                 Mesh m = this.meshes.get(i);
                 if (this.verbose)
-                    System.out.println(" [" + (i+1) + "/" + this.meshes.size() + "] Generating " + m.getClass().getSimpleName() + "...");
+                    System.out.println(" [" + (i + 1) + "/" + this.meshes.size() + "] Generating "
+                            + m.getClass().getSimpleName() + "...");
                 boolean originalHide = m.hideProgress;
                 m.hideProgress = true;
                 try {
@@ -273,7 +296,7 @@ public class STL {
             }
             if (this.verbose)
                 System.out.println("File saved as '" + filePath + "'");
-                System.out.println("Triangle Count: " + triangleCount[0]);
+            System.out.println("Triangle Count: " + triangleCount[0]);
 
         } catch (IOException e) {
             System.err.println("Error writing STL file: " + e.getMessage());
@@ -282,6 +305,11 @@ public class STL {
     }
 
     @Override
+    /**
+     * ToStrings the specified value.
+     * 
+     * @return the String result.
+     */
     public String toString() {
         return String.format(
                 "STL: %s (%d meshes)\n%.2fx%.2f %s",
