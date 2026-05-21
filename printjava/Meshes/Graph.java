@@ -4,6 +4,7 @@ import printjava.Mesh;
 import printjava.Quad;
 import printjava.Point;
 import printjava.Point2;
+import printjava.Triangle;
 import java.util.function.Function;
 
 public class Graph extends Mesh {
@@ -13,6 +14,9 @@ public class Graph extends Mesh {
     private double width, height, depth;
     // describes the number of divisions in the x and y directions
     private int xDivisions, yDivisions;
+
+    private static final int MAX_DIVISIONS = 2000;
+    private static final long MAX_GRID_POINTS = 8_000_000L;
 
     private Function<Point2, Double> f;
 
@@ -105,7 +109,34 @@ public class Graph extends Mesh {
      * evaluates the function at each subdivision point and creates a triange for
      * each
      */
+    private int clampDivisions(int value) {
+        return Math.max(2, Math.min(value, MAX_DIVISIONS));
+    }
+
+    private void normalizeDivisions() {
+        this.xDivisions = clampDivisions(this.xDivisions);
+        this.yDivisions = clampDivisions(this.yDivisions);
+
+        long pointCount = (long) (this.xDivisions + 1) * (this.yDivisions + 1);
+        if (pointCount <= MAX_GRID_POINTS) {
+            return;
+        }
+
+        double scale = Math.sqrt((double) MAX_GRID_POINTS / pointCount);
+        this.xDivisions = Math.max(2, (int) (this.xDivisions * scale));
+        this.yDivisions = Math.max(2, (int) (this.yDivisions * scale));
+
+        this.xDivisions = clampDivisions(this.xDivisions);
+        this.yDivisions = clampDivisions(this.yDivisions);
+    }
+
     public void generate() {
+        this.triangles.clear();
+        generateTriangles(this::add);
+    }
+
+    public void generateTriangles(java.util.function.Consumer<Triangle> consumer) {
+        normalizeDivisions();
         double dx = (this.endX - this.startX) / this.xDivisions;
         double dy = (this.endY - this.startY) / this.yDivisions;
 
@@ -152,61 +183,61 @@ public class Graph extends Mesh {
                         + ((points[i + 1][j + 1] - bottom) / range) * (this.depth - this.baseHeight);
                 double h01 = this.baseHeight + ((points[i][j + 1] - bottom) / range) * (this.depth - this.baseHeight);
 
-                
-
                 // add walls
                 if (this.base && (i == 0 || i == this.xDivisions - 1 || j == 0 || j == this.yDivisions - 1)) {
                     if (i == 0) {
-                        add(new Quad(new Point(x0, h01, y1), new Point(x0, h00, y0), new Point(x0, 0, y0),
-                                new Point(x0, 0, y1)));
+                        consumer.accept(new Triangle(new Point(x0, h01, y1), new Point(x0, h00, y0), new Point(x0, 0, y0)));
+                        consumer.accept(new Triangle(new Point(x0, h01, y1), new Point(x0, 0, y0), new Point(x0, 0, y1)));
                     }
                     if (i == this.xDivisions - 1) {
-                        add(new Quad(new Point(x1, h10, y0), new Point(x1, h11, y1), new Point(x1, 0, y1),
-                                new Point(x1, 0, y0)));
+                        consumer.accept(new Triangle(new Point(x1, h10, y0), new Point(x1, h11, y1), new Point(x1, 0, y1)));
+                        consumer.accept(new Triangle(new Point(x1, h10, y0), new Point(x1, 0, y1), new Point(x1, 0, y0)));
                     }
                     if (j == 0) {
-                        add(new Quad(new Point(x0, h00, y0), new Point(x1, h10, y0), new Point(x1, 0, y0),
-                                new Point(x0, 0, y0)));
+                        consumer.accept(new Triangle(new Point(x0, h00, y0), new Point(x1, h10, y0), new Point(x1, 0, y0)));
+                        consumer.accept(new Triangle(new Point(x0, h00, y0), new Point(x1, 0, y0), new Point(x0, 0, y0)));
                     }
                     if (j == this.yDivisions - 1) {
-                        add(new Quad(new Point(x0, 0, y1), new Point(x1, 0, y1), new Point(x1, h11, y1),
-                                new Point(x0, h01, y1)));
+                        consumer.accept(new Triangle(new Point(x0, 0, y1), new Point(x1, 0, y1), new Point(x1, h11, y1)));
+                        consumer.accept(new Triangle(new Point(x0, 0, y1), new Point(x1, h11, y1), new Point(x0, h01, y1)));
                     }
                 } else {
                     if (i == 0) {
-                        add(new Quad(new Point(x0, h01, y1), new Point(x0, h00, y0), new Point(x0, h00-this.thickness, y0),
-                                new Point(x0, h01-this.thickness, y0)));
+                        consumer.accept(new Triangle(new Point(x0, h01, y1), new Point(x0, h00, y0), new Point(x0, h00-this.thickness, y0)));
+                        consumer.accept(new Triangle(new Point(x0, h01, y1), new Point(x0, h00-this.thickness, y0), new Point(x0, h01-this.thickness, y0)));
                     }
                     if (i == this.xDivisions - 1) {
-                        add(new Quad(new Point(x1, h10, y0), new Point(x1, h11, y1), new Point(x1, h10-this.thickness, y1),
-                                new Point(x1, h11-this.thickness, y0)));
+                        consumer.accept(new Triangle(new Point(x1, h10, y0), new Point(x1, h11, y1), new Point(x1, h10-this.thickness, y1)));
+                        consumer.accept(new Triangle(new Point(x1, h10-this.thickness, y1), new Point(x1, h11, y1), new Point(x1, h11-this.thickness, y0)));
                     }
                     if (j == 0) {
-                        add(new Quad(new Point(x0, h00, y0), new Point(x1, h10, y0), new Point(x1, h00-this.thickness, y0),
-                                new Point(x0, h10-this.thickness, y0)));
+                        consumer.accept(new Triangle(new Point(x0, h00, y0), new Point(x1, h10, y0), new Point(x1, h00-this.thickness, y0)));
+                        consumer.accept(new Triangle(new Point(x0, h00, y0), new Point(x1, h00-this.thickness, y0), new Point(x0, h10-this.thickness, y0)));
                     }
                     if (j == this.yDivisions - 1) {
-                        add(new Quad(new Point(x0, h11-this.thickness, y1), new Point(x1, h01-this.thickness, y1), new Point(x1, h11, y1),
-                                new Point(x0, h01, y1)));
+                        consumer.accept(new Triangle(new Point(x0, h11-this.thickness, y1), new Point(x1, h01-this.thickness, y1), new Point(x1, h11, y1)));
+                        consumer.accept(new Triangle(new Point(x0, h11-this.thickness, y1), new Point(x1, h11, y1), new Point(x0, h01, y1)));
                     }
                 }
 
                 // add surface quad
-                add(new Quad(new Point(x0, h01, y1), new Point(x1, h11, y1), new Point(x1, h10, y0),
-                        new Point(x0, h00, y0)));
+                consumer.accept(new Triangle(new Point(x0, h01, y1), new Point(x1, h11, y1), new Point(x1, h10, y0)));
+                consumer.accept(new Triangle(new Point(x0, h01, y1), new Point(x1, h10, y0), new Point(x0, h00, y0)));
 
                 // add backface if no walls
                 if (!this.base) {
-                    add(new Quad(new Point(x0, h00-this.thickness, y0), new Point(x1, h10-this.thickness, y0), new Point(x1, h11-this.thickness, y1),
-                            new Point(x0, h01-this.thickness, y1)));
+                    consumer.accept(new Triangle(new Point(x0, h00-this.thickness, y0), new Point(x1, h10-this.thickness, y0), new Point(x1, h11-this.thickness, y1)));
+                    consumer.accept(new Triangle(new Point(x0, h00-this.thickness, y0), new Point(x1, h11-this.thickness, y1), new Point(x0, h01-this.thickness, y1)));
                 }
             }
         }
 
         // bottom face
         if (this.base) {
-            add(new Quad(new Point(-this.width / 2, 0, -this.height / 2),
+            consumer.accept(new Triangle(new Point(-this.width / 2, 0, -this.height / 2),
                     new Point(this.width / 2, 0, -this.height / 2),
+                    new Point(this.width / 2, 0, this.height / 2)));
+            consumer.accept(new Triangle(new Point(-this.width / 2, 0, -this.height / 2),
                     new Point(this.width / 2, 0, this.height / 2), new Point(-this.width / 2, 0, this.height / 2)));
         }
     }

@@ -2,7 +2,6 @@ package printjava;
 
 import java.io.*;
 import java.util.*;
-import java.lang.reflect.Method;
 
 public class STL {
     // name of the file
@@ -94,7 +93,7 @@ public class STL {
     /**
      * writes to the stl file in ascii format
      */
-    private void writeAscii() {
+    private void writeAscii() throws IOException {
         String filePath = this.name + ".stl";
 
         File file = new File(filePath);
@@ -102,7 +101,7 @@ public class STL {
             file.delete();
         }
 
-        int boundErrors = 0;
+        final int[] boundErrors = { 0 };
         if (this.verbose)
             System.out.println("Beginning write to '" + filePath + "'");
 
@@ -113,52 +112,51 @@ public class STL {
                 if (this.verbose)
                     System.out.println("\t[" + (i+1) + "/" + this.meshes.size() + "] Generating " + m.getClass().getSimpleName() + "...");
 
-                try {
-                    Method method = m.getClass().getMethod("generate");
-                    method.setAccessible(true);
-                    method.invoke(m);
-                } catch (NoSuchMethodException e) {
-                    // e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
                 writer.write(String.format("solid %s\r\n", i));
 
                 Point offset = m.position.subtract(m.anchor);
                 Point rotationAngles = this.radians ? m.rotation : m.rotation.multiply(Math.PI / 180.0);
                 Point scale = m.scale;
 
-                for (Triangle t : m.triangles) {
-                    Point rotatedNormal = t.normal.rotate(rotationAngles, m.anchor);
-                    Point translatedNormal = rotatedNormal.add(offset);
+                try {
+                    m.generateTriangles(t -> {
+                        try {
+                            Point rotatedNormal = t.normal.rotate(rotationAngles, m.anchor);
+                            Point translatedNormal = rotatedNormal.add(offset);
 
-                    writer.write(String.format("  facet normal %f %f %f\r\n",
-                            translatedNormal.x, translatedNormal.y, translatedNormal.z));
-                    writer.write("    outer loop\r\n");
+                            writer.write(String.format("  facet normal %f %f %f\r\n",
+                                    translatedNormal.x, translatedNormal.y, translatedNormal.z));
+                            writer.write("    outer loop\r\n");
 
-                    for (Point v : List.of(t.p3, t.p2, t.p1)) {
-                        Point scaledVertex = v.multiply(scale);
-                        Point rotatedVertex = scaledVertex.rotate(rotationAngles, m.anchor);
-                        Point translatedVertex = rotatedVertex.add(offset);
+                            for (Point v : List.of(t.p3, t.p2, t.p1)) {
+                                Point scaledVertex = v.multiply(scale);
+                                Point rotatedVertex = scaledVertex.rotate(rotationAngles, m.anchor);
+                                Point translatedVertex = rotatedVertex.add(offset);
 
-                        if (translatedVertex.x > this.width / 2 || translatedVertex.x < -this.width / 2
-                                || translatedVertex.y > this.height / 2 || translatedVertex.y < -this.height / 2
-                                || translatedVertex.z > this.depth || translatedVertex.z < 0) {
-                            boundErrors++;
+                                if (translatedVertex.x > this.width / 2 || translatedVertex.x < -this.width / 2
+                                        || translatedVertex.y > this.height / 2 || translatedVertex.y < -this.height / 2
+                                        || translatedVertex.z > this.depth || translatedVertex.z < 0) {
+                                    boundErrors[0]++;
+                                }
+
+                                writer.write(String.format("      vertex %f %f %f\r\n",
+                                        translatedVertex.x, translatedVertex.y, translatedVertex.z));
+                            }
+
+                            writer.write("    endloop\r\n  endfacet\r\n");
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
                         }
-
-                        writer.write(String.format("      vertex %f %f %f\r\n",
-                                translatedVertex.x, translatedVertex.y, translatedVertex.z));
-                    }
-
-                    writer.write("    endloop\r\n  endfacet\r\n");
+                    });
+                } catch (UncheckedIOException e) {
+                    throw (IOException) e.getCause();
                 }
+
                 writer.write(String.format("endsolid %s\r\n", i));
             }
 
-            if (boundErrors > 0) {
-                System.out.println("WARNING: " + boundErrors + " vertices are outside the bounds of your printer.");
+            if (boundErrors[0] > 0) {
+                System.out.println("WARNING: " + boundErrors[0] + " vertices are outside the bounds of your printer.");
             }
             if (this.verbose)
                 System.out.println("File saved as '" + filePath + "'");
@@ -189,7 +187,12 @@ public class STL {
     public void write() {
 
         if (this.ascii) {
-            this.writeAscii();
+            try {
+                this.writeAscii();
+            } catch (IOException e) {
+                System.err.println("Error writing STL file: " + e.getMessage());
+                e.printStackTrace();
+            }
             return;
         }
 
@@ -200,7 +203,7 @@ public class STL {
             file.delete();
         }
 
-        int boundErrors = 0;
+        final int[] boundErrors = { 0 };
         if (this.verbose)
             System.out.println("Beginning write to '" + filePath + "'");
 
@@ -209,23 +212,22 @@ public class STL {
             byte[] header = new byte[80];
             writer.write(header);
 
-            int triangleCount = 0;
+            final int[] triangleCount = { 0 };
             for (int i = 0; i < this.meshes.size(); i++) {
                 Mesh m = this.meshes.get(i);
                 if (this.verbose)
                     System.out.println(" [" + (i+1) + "/" + this.meshes.size() + "] Generating " + m.getClass().getSimpleName() + "...");
+                boolean originalHide = m.hideProgress;
+                m.hideProgress = true;
                 try {
-                    Method method = m.getClass().getMethod("generate");
-                    method.setAccessible(true);
-                    method.invoke(m);
-                } catch (NoSuchMethodException e) {
-                    // e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    m.generateTriangles(t -> triangleCount[0]++);
+                } catch (UncheckedIOException e) {
+                    throw (IOException) e.getCause();
+                } finally {
+                    m.hideProgress = originalHide;
                 }
-                triangleCount += m.triangles.size();
             }
-            writer.writeInt(Integer.reverseBytes(triangleCount));
+            writer.writeInt(Integer.reverseBytes(triangleCount[0]));
 
             for (int i = 0; i < this.meshes.size(); i++) {
                 Mesh m = this.meshes.get(i);
@@ -234,36 +236,44 @@ public class STL {
                 Point rotationAngles = this.radians ? m.rotation : m.rotation.multiply(Math.PI / 180.0);
                 Point scale = m.scale;
 
-                for (Triangle t : m.triangles) {
-                    Point rotatedNormal = t.normal.rotate(rotationAngles, m.anchor);
-                    Point translatedNormal = rotatedNormal.add(offset);
+                try {
+                    m.generateTriangles(t -> {
+                        try {
+                            Point rotatedNormal = t.normal.rotate(rotationAngles, m.anchor);
+                            Point translatedNormal = rotatedNormal.add(offset);
 
-                    writePoint(writer, translatedNormal);
+                            writePoint(writer, translatedNormal);
 
-                    for (Point v : List.of(t.p1, t.p2, t.p3)) {
-                        Point scaledVertex = v.multiply(scale);
-                        Point rotatedVertex = scaledVertex.rotate(rotationAngles, m.anchor);
-                        Point translatedVertex = rotatedVertex.add(offset);
+                            for (Point v : List.of(t.p1, t.p2, t.p3)) {
+                                Point scaledVertex = v.multiply(scale);
+                                Point rotatedVertex = scaledVertex.rotate(rotationAngles, m.anchor);
+                                Point translatedVertex = rotatedVertex.add(offset);
 
-                        if (translatedVertex.x > this.width / 2 || translatedVertex.x < -this.width / 2
-                                || translatedVertex.y > this.height / 2 || translatedVertex.y < -this.height / 2
-                                || translatedVertex.z > this.depth || translatedVertex.z < 0) {
-                            boundErrors++;
+                                if (translatedVertex.x > this.width / 2 || translatedVertex.x < -this.width / 2
+                                        || translatedVertex.y > this.height / 2 || translatedVertex.y < -this.height / 2
+                                        || translatedVertex.z > this.depth || translatedVertex.z < 0) {
+                                    boundErrors[0]++;
+                                }
+
+                                writePoint(writer, translatedVertex);
+                            }
+
+                            writer.writeShort(0);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
                         }
-
-                        writePoint(writer, translatedVertex);
-                    }
-
-                    writer.writeShort(0);
+                    });
+                } catch (UncheckedIOException e) {
+                    throw (IOException) e.getCause();
                 }
             }
 
-            if (boundErrors > 0) {
-                System.out.println("WARNING: " + boundErrors + " vertices are outside the bounds of your printer.");
+            if (boundErrors[0] > 0) {
+                System.out.println("WARNING: " + boundErrors[0] + " vertices are outside the bounds of your printer.");
             }
             if (this.verbose)
                 System.out.println("File saved as '" + filePath + "'");
-                System.out.println("Triangle Count: " + triangleCount);
+                System.out.println("Triangle Count: " + triangleCount[0]);
 
         } catch (IOException e) {
             System.err.println("Error writing STL file: " + e.getMessage());

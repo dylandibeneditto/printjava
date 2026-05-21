@@ -1,5 +1,6 @@
 package printjava;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Mesh {
 	public ArrayList<Triangle> triangles = new ArrayList<Triangle>();
@@ -15,6 +16,9 @@ public class Mesh {
 	// 2 corresponds to twice the size, 0.5 corresponds to half the size
 	public Point scale = new Point(1,1,1);
 
+	// suppress progress output during internal triangle counting
+	public boolean hideProgress = false;
+
 	/**
 	 * adds a triangle to the mesh
 	 */
@@ -29,6 +33,24 @@ public class Mesh {
 		Triangle[] qtriangles = q.toTriangle();
 		for (Triangle t : qtriangles) {
 			this.add(t);
+		}
+	}
+
+	/**
+	 * Default mesh generation hook. Subclasses should override generate() when
+	 * they can produce triangles directly.
+	 */
+	public void generate() {
+	}
+
+	/**
+	 * Stream triangles to a consumer without requiring the entire triangle list to be stored.
+	 */
+	public void generateTriangles(Consumer<Triangle> consumer) {
+		this.triangles.clear();
+		this.generate();
+		for (Triangle t : this.triangles) {
+			consumer.accept(t);
 		}
 	}
 }

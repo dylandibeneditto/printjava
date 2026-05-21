@@ -112,7 +112,7 @@ public class Grid extends Mesh {
                     
                     // Calculate progress based on current position
                     double progress = ((x * yDivisions * zDivisions) + (y * zDivisions) + z) / (double) ((xDivisions - 1) * (yDivisions - 1) * (zDivisions - 1));
-                    if (progress % 0.25 == 0) {
+                    if (!this.hideProgress && progress % 0.25 == 0) {
                         System.out.print("\rRendering progress: " + (int)(progress * 100) + "%");
                     }
                 }

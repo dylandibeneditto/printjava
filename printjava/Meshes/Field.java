@@ -11,6 +11,46 @@ public class Field extends Mesh {
     public int xDivisions, yDivisions, zDivisions;
     Function<Point, Double> f;
 
+    private static final int MIN_DIVISIONS = 2;
+    private static final int MAX_DIVISIONS = 2000;
+    private static final long MAX_CUBE_COUNT = 12_000_000L;
+
+    private int clampDivisions(int value) {
+        return Math.max(MIN_DIVISIONS, Math.min(value, MAX_DIVISIONS));
+    }
+
+    private void normalizeDivisions() {
+        this.xDivisions = clampDivisions(this.xDivisions);
+        this.yDivisions = clampDivisions(this.yDivisions);
+        this.zDivisions = clampDivisions(this.zDivisions);
+
+        long cubeCount = (long) (this.xDivisions - 1) * (this.yDivisions - 1) * (this.zDivisions - 1);
+        if (cubeCount <= MAX_CUBE_COUNT) {
+            return;
+        }
+
+        double scale = Math.cbrt((double) MAX_CUBE_COUNT / cubeCount);
+        this.xDivisions = Math.max(MIN_DIVISIONS, (int) (this.xDivisions * scale));
+        this.yDivisions = Math.max(MIN_DIVISIONS, (int) (this.yDivisions * scale));
+        this.zDivisions = Math.max(MIN_DIVISIONS, (int) (this.zDivisions * scale));
+
+        this.xDivisions = clampDivisions(this.xDivisions);
+        this.yDivisions = clampDivisions(this.yDivisions);
+        this.zDivisions = clampDivisions(this.zDivisions);
+
+        while ((long) (this.xDivisions - 1) * (this.yDivisions - 1) * (this.zDivisions - 1) > MAX_CUBE_COUNT) {
+            if (this.xDivisions >= this.yDivisions && this.xDivisions >= this.zDivisions && this.xDivisions > MIN_DIVISIONS) {
+                this.xDivisions--;
+            } else if (this.yDivisions >= this.xDivisions && this.yDivisions >= this.zDivisions && this.yDivisions > MIN_DIVISIONS) {
+                this.yDivisions--;
+            } else if (this.zDivisions > MIN_DIVISIONS) {
+                this.zDivisions--;
+            } else {
+                break;
+            }
+        }
+    }
+
     private static class PointValue {
         public final double x, y, z;
         public final double value;
@@ -68,28 +108,45 @@ public class Field extends Mesh {
      * https://youtu.be/M3iI2l0ltbE?si=Xa66wd-XEU3Fn80s
      */
     public void generate() {
+        this.triangles.clear();
+        generateTriangles(this::add);
+    }
+
+    public void generateTriangles(java.util.function.Consumer<Triangle> consumer) {
+        normalizeDivisions();
+
         double dx = width / xDivisions;
         double dy = height / yDivisions;
         double dz = depth / zDivisions;
         double isolevel = 0.1;
-        double[][][] field = new double[xDivisions][yDivisions][zDivisions];
+
+        float[][] currentSlice = new float[xDivisions][yDivisions];
+        float[][] nextSlice = new float[xDivisions][yDivisions];
+
         for (int i = 0; i < xDivisions; i++) {
             for (int j = 0; j < yDivisions; j++) {
-                for (int k = 0; k < zDivisions; k++) {
+                double x = i * dx - (width / 2);
+                double y = j * dy - (height / 2);
+                double z = 0 * dz - (depth / 2);
+                currentSlice[i][j] = f.apply(new Point(x, y, z)).floatValue();
+            }
+        }
+
+        if (zDivisions > 1) {
+            for (int i = 0; i < xDivisions; i++) {
+                for (int j = 0; j < yDivisions; j++) {
                     double x = i * dx - (width / 2);
                     double y = j * dy - (height / 2);
-                    double z = k * dz - (depth / 2);
-                    field[i][j][k] = f.apply(new Point(x, y, z));
+                    double z = 1 * dz - (depth / 2);
+                    nextSlice[i][j] = f.apply(new Point(x, y, z)).floatValue();
                 }
             }
         }
-        // loop through each cube in the field
-        for(int i = 0; i < xDivisions - 1; i++) {
-            for(int j = 0; j < yDivisions - 1; j++) {
-                for(int k = 0; k < zDivisions - 1; k++) {
-                    // will store each vertex of the cube
+
+        for (int k = 0; k < zDivisions - 1; k++) {
+            for (int i = 0; i < xDivisions - 1; i++) {
+                for (int j = 0; j < yDivisions - 1; j++) {
                     PointValue[] cubeCorners = new PointValue[8];
-                    // logic to calculate the vertices of the cube
                     for (int n = 0; n < 8; n++) {
                         int xOffset = (n & 1);
                         int yOffset = (n & 2) >> 1;
@@ -99,15 +156,12 @@ public class Field extends Mesh {
                         double y1 = (j + yOffset) * dy - (height / 2);
                         double z1 = (k + zOffset) * dz - (depth / 2);
 
-                        cubeCorners[n] = new PointValue(
-                            x1,
-                            y1,
-                            z1,
-                            field[i + xOffset][j + yOffset][k + zOffset]
-                        );
+                        float value = zOffset == 0 ? currentSlice[i + xOffset][j + yOffset]
+                                : nextSlice[i + xOffset][j + yOffset];
+
+                        cubeCorners[n] = new PointValue(x1, y1, z1, value);
                     }
 
-                    // calculate the cube's index
                     int cubeIndex = 0;
                     for (int n = 0; n < 8; n++) {
                         if (cubeCorners[n].value < isolevel) cubeIndex |= 1 << n;
@@ -115,13 +169,11 @@ public class Field extends Mesh {
 
                     if (EDGE_TABLE[cubeIndex] == 0) continue;
 
-                    // will store the vertices of the triangles, which are at most 4 triangles (12 vertices)
                     Point[] vertlist = new Point[12];
                     for (int e = 0; e < 12; e++) {
                         if ((EDGE_TABLE[cubeIndex] & (1 << e)) != 0) {
                             int v1 = EDGE_VERTEX_INDICES[e][0];
                             int v2 = EDGE_VERTEX_INDICES[e][1];
-                            // interpolate the vertex, basically find point between the two cubes to allow for a smooth transition
                             vertlist[e] = interpolate(isolevel, cubeCorners[v1], cubeCorners[v2]);
                         }
                     }
@@ -131,14 +183,31 @@ public class Field extends Mesh {
                         Point p2 = vertlist[TRIANGLE_TABLE[cubeIndex][t + 1]];
                         Point p3 = vertlist[TRIANGLE_TABLE[cubeIndex][t + 2]];
                         if (p1 != null && p2 != null && p3 != null) {
-                            add(new Triangle(p3, p2, p1));
+                            consumer.accept(new Triangle(p3, p2, p1));
                         }
                     }
                 }
             }
-            if (i % 10 == 0) {
-                double progress = i / (double)(xDivisions - 1);
+
+            if (!this.hideProgress && k % 5 == 0) {
+                double progress = k / (double)(zDivisions - 1);
                 System.out.printf("\rRendering progress: %.2f%%", progress * 100);
+            }
+
+            if (k < zDivisions - 2) {
+                float[][] temp = currentSlice;
+                currentSlice = nextSlice;
+                nextSlice = temp;
+
+                int nextZ = k + 2;
+                for (int i = 0; i < xDivisions; i++) {
+                    for (int j = 0; j < yDivisions; j++) {
+                        double x = i * dx - (width / 2);
+                        double y = j * dy - (height / 2);
+                        double z = nextZ * dz - (depth / 2);
+                        nextSlice[i][j] = f.apply(new Point(x, y, z)).floatValue();
+                    }
+                }
             }
         }
     }
