@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class Text extends Field {
     private Font font;
-    
+
     private static Path2D textOutline;
     private static Rectangle2D textBounds;
     private static BufferedImage distanceField;
@@ -28,41 +28,76 @@ public class Text extends Field {
     private static int imageHeight;
     private static double imageScale;
     private static double minX, minY, maxX, maxY;
-    
+
+    /**
+     * Constructs a new Text.
+     * 
+     * @param text            the text value.
+     * @param fontSize        the fontSize value.
+     * @param extrusionHeight the extrusionHeight value.
+     */
     public Text(String text, double fontSize, double extrusionHeight) {
         this(text, 1, extrusionHeight, 200);
-        this.scale.set(fontSize, fontSize, extrusionHeight*2);
+        this.scale.set(fontSize, fontSize, extrusionHeight * 2);
     }
 
+    /**
+     * Constructs a new Text.
+     * 
+     * @param text            the text value.
+     * @param fontSize        the fontSize value.
+     * @param extrusionHeight the extrusionHeight value.
+     * @param resolution      the resolution value.
+     */
     public Text(String text, double fontSize, double extrusionHeight, int resolution) {
-        this(text, 1, extrusionHeight, resolution, new Font("Plain", Font.BOLD, (int)resolution));
-        this.scale.set(fontSize, fontSize, extrusionHeight*2);
+        this(text, 1, extrusionHeight, resolution, new Font("Plain", Font.BOLD, (int) resolution));
+        this.scale.set(fontSize, fontSize, extrusionHeight * 2);
     }
 
+    /**
+     * Constructs a new Text.
+     * 
+     * @param text            the text value.
+     * @param fontSize        the fontSize value.
+     * @param extrusionHeight the extrusionHeight value.
+     * @param fontPath        the fontPath value.
+     * @throws IOException if an error occurs.
+     */
     public Text(String text, double fontSize, double extrusionHeight, String fontPath) throws IOException {
         this(text, 1, extrusionHeight, 200, loadCustomFont(fontPath, 200));
-        this.scale.set(fontSize, fontSize, extrusionHeight*2);
+        this.scale.set(fontSize, fontSize, extrusionHeight * 2);
     }
 
-    public Text(String text, double fontSize, double extrusionHeight, int resolution, String fontPath) throws IOException {
+    /**
+     * Constructs a new Text.
+     * 
+     * @param text            the text value.
+     * @param fontSize        the fontSize value.
+     * @param extrusionHeight the extrusionHeight value.
+     * @param resolution      the resolution value.
+     * @param fontPath        the fontPath value.
+     * @throws IOException if an error occurs.
+     */
+    public Text(String text, double fontSize, double extrusionHeight, int resolution, String fontPath)
+            throws IOException {
         this(text, 1, extrusionHeight, resolution, loadCustomFont(fontPath, resolution));
-        this.scale.set(fontSize, fontSize, extrusionHeight*2);
+        this.scale.set(fontSize, fontSize, extrusionHeight * 2);
     }
 
     private Text(String text, double fontSize, double extrusionHeight, int resolution, Font font) {
-        super((p) -> isInsideText(p, text, fontSize, 1.0), 50, 2, 1.0+1, 10000, 250, 5);
-        
+        super((p) -> isInsideText(p, text, fontSize, 1.0), 50, 2, 1.0 + 1, 10000, 250, 5);
+
         this.font = font;
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
         double w = this.font.getStringBounds(text, frc).getWidth() / 200.0;
         double h = this.font.getStringBounds(text, frc).getHeight() / 200.0;
-        
+
         super.width = w * fontSize;
         super.height = h * fontSize;
-        super.xDivisions = (int)(w * resolution);
-        super.yDivisions = (int)(h * resolution);
-        
+        super.xDivisions = (int) (w * resolution);
+        super.yDivisions = (int) (h * resolution);
+
         initializeTextOutline(text, fontSize, font, frc);
         generateDistanceField();
 
@@ -78,28 +113,28 @@ public class Text extends Field {
             throw new IOException("Failed to load font file: " + fontPath, e);
         }
     }
-    
+
     private void initializeTextOutline(String text, double fontSize, Font font, FontRenderContext frc) {
         textOutline = new Path2D.Double();
         double xOffset = 0.0;
         double characterSpacing = 0.1;
         double scale = 1.0 / 200.0;
-        
+
         for (char c : text.toCharArray()) {
             String charAsString = String.valueOf(c);
             GlyphVector glyphVector = font.createGlyphVector(frc, charAsString);
             Path2D charOutline = (Path2D) glyphVector.getOutline();
-            
+
             AffineTransform translation = AffineTransform.getTranslateInstance(xOffset, 0);
             charOutline.transform(translation);
             textOutline.append(charOutline, false);
-            
+
             xOffset += glyphVector.getGlyphMetrics(0).getAdvance() + characterSpacing;
         }
-        
+
         textOutline.transform(AffineTransform.getScaleInstance(scale, scale));
         textOutline.transform(AffineTransform.getScaleInstance(1, -1));
-        
+
         textBounds = textOutline.getBounds2D();
         minX = textBounds.getMinX() - maxDistanceForInterpolation;
         minY = textBounds.getMinY() - maxDistanceForInterpolation;
@@ -116,33 +151,33 @@ public class Text extends Field {
         maxX = textBounds.getMaxX() + maxDistanceForInterpolation;
         maxY = textBounds.getMaxY() + maxDistanceForInterpolation;
     }
-    
+
     private void generateDistanceField() {
         imageScale = resolution;
-        imageWidth = (int)Math.ceil((maxX - minX) * imageScale);
-        imageHeight = (int)Math.ceil((maxY - minY) * imageScale);
-        
+        imageWidth = (int) Math.ceil((maxX - minX) * imageScale);
+        imageHeight = (int) Math.ceil((maxY - minY) * imageScale);
+
         distanceField = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_BYTE_GRAY);
         Graphics2D g2d = distanceField.createGraphics();
-        
+
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        
+
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, imageWidth, imageHeight);
-        
+
         g2d.setColor(Color.BLACK);
-        
+
         AffineTransform textToImage = new AffineTransform();
         textToImage.scale(imageScale, imageScale);
         textToImage.translate(-minX, -minY);
-        
+
         g2d.fill(textToImage.createTransformedShape(textOutline));
         g2d.dispose();
     }
-    
+
     private static double isInsideText(Point p, String text, double fontSize, double extrusionHeight) {
-        if(Math.abs(p.z) > extrusionHeight/2) {
+        if (Math.abs(p.z) > extrusionHeight / 2) {
             return 1.0;
         }
 
@@ -154,8 +189,8 @@ public class Text extends Field {
             return 1.0;
         }
 
-        int ix = (int)((p.x - minX) * imageScale);
-        int iy = (int)((p.y - minY) * imageScale);
+        int ix = (int) ((p.x - minX) * imageScale);
+        int iy = (int) ((p.y - minY) * imageScale);
 
         if (ix < 0 || ix >= imageWidth || iy < 0 || iy >= imageHeight) {
             return 1.0;
@@ -169,26 +204,44 @@ public class Text extends Field {
 
     // alignment methods
 
+    /**
+     * AlignLefts the specified value.
+     */
     public void alignLeft() {
-        this.anchor.x = -this.width*this.scale.x / 2;
+        this.anchor.x = -this.width * this.scale.x / 2;
     }
 
+    /**
+     * AlignRights the specified value.
+     */
     public void alignRight() {
-        this.anchor.x = this.width*this.scale.x / 2;
+        this.anchor.x = this.width * this.scale.x / 2;
     }
 
+    /**
+     * AlignCenters the specified value.
+     */
     public void alignCenter() {
         this.anchor.x = 0;
     }
 
+    /**
+     * AlignTops the specified value.
+     */
     public void alignTop() {
-        this.anchor.y = this.height*this.scale.y / 2;
+        this.anchor.y = this.height * this.scale.y / 2;
     }
 
+    /**
+     * AlignBottoms the specified value.
+     */
     public void alignBottom() {
-        this.anchor.y = -this.height*this.scale.y / 2;
+        this.anchor.y = -this.height * this.scale.y / 2;
     }
 
+    /**
+     * AlignMiddles the specified value.
+     */
     public void alignMiddle() {
         this.anchor.y = 0;
     }

@@ -8,6 +8,9 @@ public class Rect extends Mesh {
     private double width, height, depth;
 
     // new Rect();
+    /**
+     * Constructs a new Rect.
+     */
     public Rect() {
         super();
         this.width = 1;
@@ -17,27 +20,45 @@ public class Rect extends Mesh {
     }
 
     // new Rect(1);
+    /**
+     * Constructs a new Rect.
+     * 
+     * @param size the size value.
+     */
     public Rect(double size) {
         super();
         this.width = size;
         this.height = size;
         this.depth = size;
-        
+
     }
 
     // new Rect(1, 1, 1);
+    /**
+     * Constructs a new Rect.
+     * 
+     * @param width  the width value.
+     * @param height the height value.
+     * @param depth  the depth value.
+     */
     public Rect(double width, double height, double depth) {
         super();
         this.width = width;
         this.height = height;
         this.depth = depth;
-        
+
     }
 
+    /**
+     * SnapToGrounds the specified value.
+     */
     public void snapToGround() {
         this.anchor.y = -this.height / 2;
     }
 
+    /**
+     * SnapToCenters the specified value.
+     */
     public void snapToCenter() {
         this.anchor.y = 0;
     }

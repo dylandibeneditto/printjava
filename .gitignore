@@ -1,4 +1,5 @@
 .DS_Store
+out/
 Main.java
 Main.class
 *.stl
@@ -11,3 +12,4 @@ VolumePrints.java
 Washer.java
 WasherPrints.java
 Beyblade.java
+.venv/

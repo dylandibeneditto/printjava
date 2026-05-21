@@ -10,32 +10,55 @@ public class Lathe extends Mesh {
     public Line line;
     public int resolution;
 
+    /**
+     * Constructs a new Lathe.
+     */
     public Lathe() {
         this.line = new Line();
         this.resolution = 30;
     }
 
+    /**
+     * Constructs a new Lathe.
+     * 
+     * @param resolution the resolution value.
+     */
     public Lathe(int resolution) {
         this.line = new Line();
         this.resolution = resolution;
     }
 
+    /**
+     * Constructs a new Lathe.
+     * 
+     * @param l the l value.
+     */
     public Lathe(Line l) {
         this.line = l;
         this.resolution = 30;
     }
 
+    /**
+     * Constructs a new Lathe.
+     * 
+     * @param l          the l value.
+     * @param resolution the resolution value.
+     */
     public Lathe(Line l, int resolution) {
         this.line = l;
         this.resolution = resolution;
     }
 
+    /**
+     * Generates the specified value.
+     */
     public void generate() {
         this.triangles.clear();
         double angleStep = 2 * Math.PI / resolution;
 
         int numPoints = this.line.points.size();
-        if (numPoints < 2) return;
+        if (numPoints < 2)
+            return;
 
         for (int i = 0; i < resolution; i++) {
             double theta1 = i * angleStep;
@@ -55,6 +78,11 @@ public class Lathe extends Mesh {
         }
     }
 
+    /**
+     * Adds the specified value.
+     * 
+     * @param p the p value.
+     */
     public void add(Point2 p) {
         this.line.add(p);
     }

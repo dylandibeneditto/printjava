@@ -9,38 +9,59 @@ import printjava.Point;
 public class Sphere extends Mesh {
     // the radius of the sphere
     private double radius;
-    
+
     // the number of subdivisions along the latitude and longitude of the sphere
     private int latitude = 30;
     private int longitude = 30;
 
     // new Sphere();
+    /**
+     * Constructs a new Sphere.
+     */
     public Sphere() {
         super();
         this.radius = 1;
-        
+
     }
 
     // new Sphere(1);
+    /**
+     * Constructs a new Sphere.
+     * 
+     * @param radius the radius value.
+     */
     public Sphere(double radius) {
         super();
         this.radius = radius;
-        
+
     }
 
     // new Sphere(1, 30, 30);
+    /**
+     * Constructs a new Sphere.
+     * 
+     * @param radius    the radius value.
+     * @param latitude  the latitude value.
+     * @param longitude the longitude value.
+     */
     public Sphere(double radius, int latitude, int longitude) {
         super();
         this.radius = radius;
         this.latitude = latitude;
         this.longitude = longitude;
-        
+
     }
 
+    /**
+     * SnapToGrounds the specified value.
+     */
     public void snapToGround() {
         this.anchor.y = -this.radius / 2;
     }
 
+    /**
+     * SnapToCenters the specified value.
+     */
     public void snapToCenter() {
         this.anchor.y = 0;
     }
@@ -49,7 +70,6 @@ public class Sphere extends Mesh {
      * Generate all the triangles that make up the sphere
      */
     public void generate() {
-        
 
         // generate the points of the sphere that intersect the latitude and longitude
         ArrayList<Point> points = new ArrayList<Point>();
@@ -72,8 +92,8 @@ public class Sphere extends Mesh {
         }
 
         // connect all the points with a triangle
-        for(int i = 0; i < this.latitude; i++) {
-            for(int j = 0; j < this.longitude; j++) {
+        for (int i = 0; i < this.latitude; i++) {
+            for (int j = 0; j < this.longitude; j++) {
                 int p0 = i * (this.longitude + 1) + j;
                 int p1 = p0 + this.longitude + 1;
 
